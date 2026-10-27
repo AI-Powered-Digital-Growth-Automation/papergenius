@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { 
   Sparkles, Camera, FileText, Layers, Archive, 
@@ -44,7 +45,15 @@ const CLASS_12_SUBJECTS = [
 ];
 
 export default function StudentDashboardPage() {
-  const { user, studentSubscription, hasSubjectAccess, consumeEvaluationQuota } = useAuth();
+  const navigate = useNavigate();
+    const { user, studentSubscription, hasSubjectAccess, consumeEvaluationQuota } = useAuth();
+  
+  // Strict Login Gatekeeper: If not logged in, redirect to register/login
+  useEffect(() => {
+    if (!user) {
+      navigate('/auth', { replace: true });
+    }
+  }, [user, navigate]);
   
   // Grade: strictly Class 10 or Class 12
   const [selectedGrade, setSelectedGrade] = useState(studentSubscription?.grade || 'Class 10');
@@ -74,8 +83,8 @@ export default function StudentDashboardPage() {
      selectedSubject.toLowerCase().includes(p.subject.toLowerCase()))
   );
 
-  const studentName = user?.user_metadata?.full_name || 'Gulzar Ahmed';
-  const studentEmail = user?.email || 'digitalgulzarservices@gmail.com';
+  const studentName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Student';
+  const studentEmail = user?.email || 'Registered Student';
 
   return (
     <div className="min-h-screen bg-[#050814] text-[#F3F4F6] pb-24 pt-6 px-4 sm:px-6 lg:px-8 text-base">
@@ -320,5 +329,6 @@ export default function StudentDashboardPage() {
     </div>
   );
 }
+
 
 
