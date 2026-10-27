@@ -31,13 +31,13 @@ export const AuthProvider = ({ children }) => {
     canGenerateOMR: true
   });
 
-  // Student Freemium vs Premium State
+  // Student Freemium vs Premium State - Default is completely Unsubscribed
   const [studentSubscription, setStudentSubscription] = useState({
     plan: 'Free Trial Student',
     isPremium: false,
     grade: 'Class 10',
-    subscribedSubjects: ['Science', 'Mathematics Standard'],
-    evaluationsRemaining: 2,
+    subscribedSubjects: [], // Zero subjects unlocked by default until paid
+    evaluationsRemaining: 2, // 2 free trial evaluations
     maxEvaluations: 2,
     hasAccessToFormulas: false,
     hasAccessToMocks: false
@@ -159,3 +159,4 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+
