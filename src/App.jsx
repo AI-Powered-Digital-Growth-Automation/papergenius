@@ -4,6 +4,8 @@ import Header from './components/common/Header';
 import Footer from './components/common/Footer';
 import ScrollToTop from './components/common/ScrollToTop';
 import FloatingNavArrows from './components/common/FloatingNavArrows';
+import ProtectedRoute from './components/common/ProtectedRoute';
+
 import LandingPage from './pages/landing/LandingPage';
 import TeacherPage from './pages/teacher/TeacherPage';
 import TeacherDashboardPage from './pages/teacher/TeacherDashboardPage';
@@ -35,32 +37,93 @@ export default function App() {
           <Header />
           <main className="flex-grow">
             <Routes>
+              {/* Public Discovery & Academic Pages */}
               <Route path="/" element={<LandingPage />} />
-              <Route path="/teacher" element={<TeacherDashboardPage />} />
-              <Route path="/teacher/dashboard" element={<TeacherDashboardPage />} />
-              <Route path="/teacher/portal" element={<TeacherPage />} />
-              <Route path="/teacher/create-paper" element={<CreatePaperPage />} />
-              <Route path="/teacher/report-cards" element={<ReportCardGeneratorPage />} />
-              
-              <Route path="/student" element={<StudentDashboardPage />} />
-              <Route path="/student/dashboard" element={<StudentDashboardPage />} />
-              <Route path="/student/evaluator" element={<StudentEvaluatorPage />} />
-              <Route path="/predictor" element={<PercentagePredictorPage />} />
-              
               <Route path="/class-10" element={<Class10Page />} />
               <Route path="/class-12" element={<Class12Page />} />
               <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/predictor" element={<PercentagePredictorPage />} />
               <Route path="/pyq-vault" element={<PyqVaultPage />} />
               <Route path="/blog" element={<BlogListPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
               <Route path="/admin" element={<AdminDashboardPage />} />
+              <Route path="/auth" element={<AuthPage />} />
 
+              {/* Protected Teacher OS Routes */}
+              <Route
+                path="/teacher"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher']}>
+                    <TeacherDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teacher/dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher']}>
+                    <TeacherDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teacher/portal"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher']}>
+                    <TeacherPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teacher/create-paper"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher']}>
+                    <CreatePaperPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teacher/report-cards"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher']}>
+                    <ReportCardGeneratorPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Protected Student OS Routes */}
+              <Route
+                path="/student"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <StudentDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/student/dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <StudentDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/student/evaluator"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <StudentEvaluatorPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Legal & Compliance */}
               <Route path="/disclaimer" element={<DisclaimerPage />} />
               <Route path="/terms" element={<TermsPage />} />
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/refund-policy" element={<RefundPage />} />
-              <Route path="/auth" element={<AuthPage />} />
 
+              {/* Catch-all redirect */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>

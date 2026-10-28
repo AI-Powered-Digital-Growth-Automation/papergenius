@@ -79,7 +79,18 @@ export default function Footer() {
               <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
               <li><Link to="/refund-policy" className="hover:text-white transition-colors">Refund & Cancellation</Link></li>
               <li><Link to="/disclaimer" className="hover:text-white transition-colors">CBSE Disclaimer</Link></li>
-              <li><a href="mailto:contact@papergenius.in" className="hover:text-white transition-colors">contact@papergenius.in</a></li>
+              <li>
+                  <a href="mailto:contact@papergenius.in" className="inline-flex items-center gap-1.5 hover:text-white transition-colors">
+                    <Mail className="w-3.5 h-3.5 text-[#06B6D4]" />
+                    <span>contact@papergenius.in</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="tel:+919530230354" className="inline-flex items-center gap-1.5 hover:text-white transition-colors">
+                    <Phone className="w-3.5 h-3.5 text-[#10B981]" />
+                    <span>+91 95302 30354</span>
+                  </a>
+                </li>
             </ul>
           </div>
 
