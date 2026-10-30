@@ -1,7 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Archive, Download, ExternalLink, Flame, Lock, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
-import { OFFICIAL_CBSE_LINKS } from '../../../data/downloadPapersData';
+import { OFFICIAL_CBSE_LINKS, OFFICIAL_CBSE_PORTAL } from '../../../data/downloadPapersData';
 
 export default function TabBundles({
   selectedGrade,
@@ -21,6 +21,7 @@ export default function TabBundles({
   };
 
   const officialLink = selectedGrade === 'Class 10' ? OFFICIAL_CBSE_LINKS.class10 : OFFICIAL_CBSE_LINKS.class12;
+  const cbseMainPortal = OFFICIAL_CBSE_PORTAL?.mainPapers || 'https://www.cbse.gov.in/cbsenew/question-paper.html';
 
   return (
     <div className="space-y-8">
@@ -71,12 +72,13 @@ export default function TabBundles({
 
               <div className="space-y-2.5 pt-3 border-t border-white/5">
                 <a
-                  href={paper.paperUrl}
-                  download
+                  href={paper.paperUrl && !paper.paperUrl.startsWith('#') && !paper.paperUrl.startsWith('/papers/') ? paper.paperUrl : cbseMainPortal}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-[#7C3CFF] to-[#06B6D4] text-white text-xs sm:text-sm font-bold shadow-md hover:opacity-95 transition-all"
                 >
-                  <Download className="w-4 h-4" />
-                  <span>Download All Sets (ZIP)</span>
+                  <ExternalLink className="w-4 h-4" />
+                  <span>Official Board Papers (CBSE Portal)</span>
                 </a>
                 <a
                   href={officialLink}

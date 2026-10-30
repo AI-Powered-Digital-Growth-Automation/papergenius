@@ -1,7 +1,13 @@
-// Verified CBSE Official SQP & MS Master Links
+﻿// Verified CBSE Official Board Examination Master Links
+export const OFFICIAL_CBSE_PORTAL = {
+  mainPapers: 'https://www.cbse.gov.in/cbsenew/question-paper.html',
+  class10Sqp: 'https://cbseacademic.nic.in/sqp_classx_2024-25.html',
+  class12Sqp: 'https://cbseacademic.nic.in/sqp_classxii_2024-25.html'
+};
+
 export const OFFICIAL_CBSE_LINKS = {
-  class10: 'https://cbseacademic.nic.in/sqp_classx_2024-25.html',
-  class12: 'https://cbseacademic.nic.in/sqp_classxii_2024-25.html'
+  class10: OFFICIAL_CBSE_PORTAL.class10Sqp,
+  class12: OFFICIAL_CBSE_PORTAL.class12Sqp
 };
 
 const PAPERS_BASE_URL = import.meta.env.VITE_PAPERS_BASE_URL 
