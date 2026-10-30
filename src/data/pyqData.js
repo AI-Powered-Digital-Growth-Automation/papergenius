@@ -6,24 +6,17 @@ export const pyqDatabase = [
     "year": "2024",
     "set": "Set 1 (Delhi)",
     "chapter": "Light - Reflection and Refraction",
-    "marks": "3 Marks",
+    "marks": "3",
+    "frequencyBadge": "3x Asked",
+    "frequency": "CBSE 2024, 2022, 2020 Delhi & AI",
     "question": "A convex lens of focal length 20 cm produces a magnified virtual as well as real image. Where should the object be placed in each case? Draw ray diagram for virtual image.",
-    "solution": "1. Real Magnified Image: Placed between F1 and 2F1 (20 cm to 40 cm from lens).\n2. Virtual Magnified Image: Placed between F1 and O (distance < 20 cm).\n3. Ray Diagram: Parallel ray passes through F2; optical center ray goes undeviated. Back-extensions meet to form virtual erect image on the same side as object.",
-    "stepMarking": [
-      {
-        "step": "Object position for real magnified (between F and 2F)",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Object position for virtual magnified (between O and F)",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Ray diagram with directional arrowheads & dotted virtual lines",
-        "marks": "1.0 Mark"
-      }
+    "answerKey": [
+      "Step 1: Statement verification - Yes, a convex lens can form both real and virtual magnified images [0.5 Mark]",
+      "Step 2: Real Magnified Image - Object placed between F1 and 2F1 (between 20 cm and 40 cm from optical center) [0.5 Mark]",
+      "Step 3: Virtual Magnified Image - Object placed between F1 and Optical Centre O (distance less than 20 cm) [0.5 Mark]",
+      "Step 4: Ray Diagram - Parallel ray refracts through focus F2, center ray goes undeviated. Back-extensions form magnified virtual erect image [1.5 Marks]"
     ],
-    "topperTip": "In optics ray diagrams, forgetting arrowheads results in a mandatory 0.5-mark deduction."
+    "cbseTip": "In optics ray diagrams, forgetting directional arrowheads results in a mandatory 0.5-mark deduction."
   },
   {
     "id": "c10-sci-2023-q2",
@@ -32,24 +25,16 @@ export const pyqDatabase = [
     "year": "2023",
     "set": "Set 2 (All India)",
     "chapter": "Chemical Reactions and Equations",
-    "marks": "3 Marks",
-    "question": "On heating green ferrous sulphate crystals: (a) What colour change occurs? (b) Name the gases released and write their smell. (c) Write balanced equation.",
-    "solution": "(a) Green crystals turn white (loss of water of crystallization) and finally reddish-brown (Fe2O3).\n(b) Sulphur dioxide (SO2) and Sulphur trioxide (SO3) are released with choking smell of burning sulphur.\n(c) 2 FeSO4 (s) --[Heat]--> Fe2O3 (s) + SO2 (g) + SO3 (g)",
-    "stepMarking": [
-      {
-        "step": "Colour change to reddish-brown (Fe2O3)",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Names of gases (SO2, SO3) with characteristic smell",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Balanced equation with heat condition & state symbols",
-        "marks": "1.0 Mark"
-      }
+    "marks": "3",
+    "frequencyBadge": "4x Asked",
+    "frequency": "CBSE 2023, 2022, 2019, 2018",
+    "question": "On heating green ferrous sulphate crystals: (a) What colour change occurs? (b) Name the gases released with their smell. (c) Write balanced equation.",
+    "answerKey": [
+      "Step 1: Colour Change - Initial green crystals turn white (loss of water of crystallization) and finally reddish-brown due to Fe2O3 [1.0 Mark]",
+      "Step 2: Gases Released - Sulphur dioxide (SO2) and Sulphur trioxide (SO3) with characteristic choking smell of burning sulphur [1.0 Mark]",
+      "Step 3: Balanced Chemical Equation - 2 FeSO4 (s) --[Heat]--> Fe2O3 (s) + SO2 (g) + SO3 (g) with state symbols [1.0 Mark]"
     ],
-    "topperTip": "Always write state symbols (s, g) and heat above the reaction arrow."
+    "cbseTip": "Always write state symbols (s, g) and specify [Heat] above the reaction arrow."
   },
   {
     "id": "c10-math-std-2024-q1",
@@ -58,28 +43,17 @@ export const pyqDatabase = [
     "year": "2024",
     "set": "Set 1 (Delhi)",
     "chapter": "Triangles",
-    "marks": "5 Marks",
+    "marks": "5",
+    "frequencyBadge": "5x Asked",
+    "frequency": "CBSE 2024, 2023, 2020, 2019, 2017",
     "question": "State and prove Basic Proportionality Theorem (Thales Theorem).",
-    "solution": "Statement: If a line is drawn parallel to one side of a triangle intersecting other two sides, it divides them in the same ratio.\nProof:\nArea(ADE)/Area(BDE) = (1/2 * AD * EN)/(1/2 * DB * EN) = AD/DB\nArea(ADE)/Area(CDE) = (1/2 * AE * DM)/(1/2 * EC * DM) = AE/EC\nSince triangles BDE & CDE lie on same base DE and between same parallels DE & BC:\nArea(BDE) = Area(CDE) => AD/DB = AE/EC. Hence Proved.",
-    "stepMarking": [
-      {
-        "step": "Statement & accurate labeled figure",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Given, To Prove, and Construction statements",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Ratio of areas proof",
-        "marks": "1.5 Marks"
-      },
-      {
-        "step": "Same base and parallels justification & conclusion",
-        "marks": "1.5 Marks"
-      }
+    "answerKey": [
+      "Step 1: Statement - If a line is drawn parallel to one side of a triangle intersecting the other two sides, it divides them in the same ratio [1.0 Mark]",
+      "Step 2: Given, To Prove & Construction - Triangle ABC with DE || BC. Draw DM perpendicular to AC and EN perpendicular to AB. Join BE and CD [1.0 Mark]",
+      "Step 3: Area Ratios - Area(ADE)/Area(BDE) = AD/DB and Area(ADE)/Area(CDE) = AE/EC [1.5 Marks]",
+      "Step 4: Justification - Triangles BDE & CDE lie on same base DE and between same parallels DE & BC. Hence AD/DB = AE/EC [1.5 Marks]"
     ],
-    "topperTip": "Box the final conclusion AD/DB = AE/EC."
+    "cbseTip": "Box the final conclusion statement AD/DB = AE/EC."
   },
   {
     "id": "c10-math-std-2023-q2",
@@ -88,24 +62,16 @@ export const pyqDatabase = [
     "year": "2023",
     "set": "Set 3 (All India)",
     "chapter": "Introduction to Trigonometry",
-    "marks": "3 Marks",
+    "marks": "3",
+    "frequencyBadge": "3x Asked",
+    "frequency": "CBSE 2023, 2020, 2018",
     "question": "Prove that: (sin theta - 2 sin^3 theta) / (2 cos^3 theta - cos theta) = tan theta.",
-    "solution": "LHS = [sin theta (1 - 2 sin^2 theta)] / [cos theta (2 cos^2 theta - 1)]\n= tan theta * [ (1 - 2(1 - cos^2 theta)) / (2 cos^2 theta - 1) ]\n= tan theta * [ (2 cos^2 theta - 1) / (2 cos^2 theta - 1) ]\n= tan theta = RHS. Hence Proved.",
-    "stepMarking": [
-      {
-        "step": "Factoring sin theta and cos theta",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Substituting sin^2 theta = 1 - cos^2 theta",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Simplification to tan theta = RHS",
-        "marks": "1.0 Mark"
-      }
+    "answerKey": [
+      "Step 1: Factoring numerator and denominator - [sin theta (1 - 2 sin^2 theta)] / [cos theta (2 cos^2 theta - 1)] [1.0 Mark]",
+      "Step 2: Substituting sin^2 theta = 1 - cos^2 theta in numerator [1.0 Mark]",
+      "Step 3: Algebraic simplification yields tan theta * [2 cos^2 theta - 1] / [2 cos^2 theta - 1] = tan theta = RHS [1.0 Mark]"
     ],
-    "topperTip": "State the identity used: sin^2 theta + cos^2 theta = 1."
+    "cbseTip": "State the identity used: sin^2 theta + cos^2 theta = 1 in the margin."
   },
   {
     "id": "c10-sst-2024-q1",
@@ -114,20 +80,17 @@ export const pyqDatabase = [
     "year": "2024",
     "set": "Set 1 (Delhi)",
     "chapter": "Nationalism in India",
-    "marks": "5 Marks",
+    "marks": "5",
+    "frequencyBadge": "4x Asked",
+    "frequency": "CBSE 2024, 2023, 2021, 2019",
     "question": "Why did Mahatma Gandhi launch the Non-Cooperation Movement? Why did he withdraw it in 1922?",
-    "solution": "Causes: 1. Outrage against Rowlatt Act (1919). 2. Jallianwala Bagh massacre (13 April 1919). 3. Khilafat issue to unite Hindus & Muslims.\nWithdrawal: In Feb 1922, Chauri Chaura incident in Gorakhpur turned violent where 22 policemen were killed. Gandhiji felt satyagrahis needed training before mass agitation.",
-    "stepMarking": [
-      {
-        "step": "3 launch causes (Rowlatt, Jallianwala, Khilafat)",
-        "marks": "3.0 Marks"
-      },
-      {
-        "step": "Chauri Chaura violent event & satyagrahi training need",
-        "marks": "2.0 Marks"
-      }
+    "answerKey": [
+      "Step 1: Causes of Launch - 1. Outrage against Rowlatt Act (1919). 2. Jallianwala Bagh massacre (13 April 1919) [2.0 Marks]",
+      "Step 2: Khilafat Issue - Bringing Hindus and Muslims together on a common national anti-colonial platform [1.0 Mark]",
+      "Step 3: Chauri Chaura Incident - In Feb 1922, a peaceful procession in Gorakhpur turned violent, burning 22 policemen [1.0 Mark]",
+      "Step 4: Gandhian Philosophy - Gandhiji believed satyagrahis needed mass discipline and training before nationwide struggle [1.0 Mark]"
     ],
-    "topperTip": "Write answers under clear bold sub-headings with numbered points."
+    "cbseTip": "Always present historical causes under structured bold bullet points."
   },
   {
     "id": "c10-eng-2024-q1",
@@ -136,20 +99,15 @@ export const pyqDatabase = [
     "year": "2024",
     "set": "Set 1 (Delhi)",
     "chapter": "A Letter to God",
-    "marks": "3 Marks",
+    "marks": "3",
+    "frequencyBadge": "3x Asked",
+    "frequency": "CBSE 2024, 2022, 2020",
     "question": "Why did Lencho write a letter to God? How did the postmaster react?",
-    "solution": "Lencho wrote the letter requesting 100 pesos because a hailstorm destroyed his entire ripe cornfield, leaving his family facing starvation. The postmaster was deeply moved by Lencho's unshakeable faith and collected 70 pesos from colleagues to send him signed as \"God\".",
-    "stepMarking": [
-      {
-        "step": "Crop destruction & demand for 100 pesos",
-        "marks": "1.5 Marks"
-      },
-      {
-        "step": "Postmaster collection of 70 pesos preserving Lencho's faith",
-        "marks": "1.5 Marks"
-      }
+    "answerKey": [
+      "Step 1: Crop Destruction - A devastating hailstorm completely destroyed Lencho's ripe cornfield, leaving his family facing starvation [1.5 Marks]",
+      "Step 2: Postmaster Reaction - Moved by Lencho's extraordinary faith, the postmaster collected 70 pesos from colleagues to send him signed as \"God\" [1.5 Marks]"
     ],
-    "topperTip": "Mention the exact figure: 70 pesos collected out of 100 requested."
+    "cbseTip": "Mention the exact figure: 70 pesos collected out of 100 requested."
   },
   {
     "id": "c12-phy-2024-q1",
@@ -158,24 +116,17 @@ export const pyqDatabase = [
     "year": "2024",
     "set": "Set 1 (Delhi)",
     "chapter": "Ray Optics and Optical Instruments",
-    "marks": "5 Marks",
+    "marks": "5",
+    "frequencyBadge": "5x Asked",
+    "frequency": "CBSE 2024, 2023, 2022, 2019, 2018",
     "question": "Derive the Lens Maker's Formula 1/f = (mu - 1)(1/R1 - 1/R2) for a double convex lens of refractive index mu placed in air.",
-    "solution": "Assumptions: Thin lens, small aperture, paraxial rays from point object.\nSurface 1: (mu/v1) - (1/u) = (mu - 1)/R1\nSurface 2: (1/v) - (mu/v1) = -(mu - 1)/R2\nAdding both equations: (1/v) - (1/u) = (mu - 1)(1/R1 - 1/R2)\nBy definition, when u = infinity, v = f => 1/f = (mu - 1)(1/R1 - 1/R2). Hence Proved.",
-    "stepMarking": [
-      {
-        "step": "Assumptions and clearly labeled ray diagram with arrows",
-        "marks": "1.5 Marks"
-      },
-      {
-        "step": "Refraction equations for surface 1 and surface 2",
-        "marks": "2.0 Marks"
-      },
-      {
-        "step": "Addition of equations and final boxed lens maker formula",
-        "marks": "1.5 Marks"
-      }
+    "answerKey": [
+      "Step 1: Assumptions - Thin lens, small aperture, paraxial rays from point object with neat ray diagram [1.5 Marks]",
+      "Step 2: Surface 1 refraction - (mu/v1) - (1/u) = (mu - 1)/R1 [1.0 Mark]",
+      "Step 3: Surface 2 refraction - (1/v) - (mu/v1) = -(mu - 1)/R2 where I1 acts as virtual object [1.0 Mark]",
+      "Step 4: Addition & Conclusion - (1/v) - (1/u) = (mu - 1)(1/R1 - 1/R2). When u = infinity, v = f => 1/f = (mu - 1)(1/R1 - 1/R2) [1.5 Marks]"
     ],
-    "topperTip": "Always box the final formula and state that virtual image I1 acts as virtual object for surface 2."
+    "cbseTip": "Box the final formula and clearly state that image I1 acts as the virtual object for surface 2."
   },
   {
     "id": "c12-phy-2023-q2",
@@ -184,24 +135,16 @@ export const pyqDatabase = [
     "year": "2023",
     "set": "Set 2 (All India)",
     "chapter": "Electromagnetic Induction",
-    "marks": "3 Marks",
+    "marks": "3",
+    "frequencyBadge": "3x Asked",
+    "frequency": "CBSE 2023, 2020, 2017",
     "question": "State Lenz's law. A metallic rod of length l rotates with angular frequency omega in a uniform magnetic field B perpendicular to rotation plane. Derive induced EMF.",
-    "solution": "1. Lenz's Law: The polarity of induced EMF opposes the magnetic flux change causing it.\n2. Motional EMF: For element dr at distance r, v = r*omega, dE = B*v*dr = B*omega*r*dr.\n3. Integrating from 0 to l: E = Integral [B*omega*r*dr] = (1/2) * B * omega * l^2.",
-    "stepMarking": [
-      {
-        "step": "Lenz's law accurate statement",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Integration setup from 0 to l with dE = B*omega*r*dr",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Final evaluated EMF: (1/2) B omega l^2",
-        "marks": "1.0 Mark"
-      }
+    "answerKey": [
+      "Step 1: Lenz's Law - The polarity of induced EMF is such that it produces a current opposing the magnetic flux change [1.0 Mark]",
+      "Step 2: Motional EMF Setup - For element dr at distance r, v = r*omega, dE = B*v*dr = B*omega*r*dr [1.0 Mark]",
+      "Step 3: Integration - E = Integral from 0 to l [B*omega*r*dr] = (1/2) * B * omega * l^2 [1.0 Mark]"
     ],
-    "topperTip": "Lenz's law is a consequence of conservation of energy."
+    "cbseTip": "Lenz's law is a direct consequence of the Law of Conservation of Energy."
   },
   {
     "id": "c12-chem-2024-q1",
@@ -210,24 +153,16 @@ export const pyqDatabase = [
     "year": "2024",
     "set": "Set 1 (Delhi)",
     "chapter": "Aldehydes, Ketones and Carboxylic Acids",
-    "marks": "3 Marks",
+    "marks": "3",
+    "frequencyBadge": "4x Asked",
+    "frequency": "CBSE 2024, 2022, 2020, 2018",
     "question": "Write chemical equations for: (a) Cannizzaro Reaction, (b) Aldol Condensation, (c) Hell-Volhard-Zelinsky (HVZ) Reaction.",
-    "solution": "(a) Cannizzaro: 2 HCHO + Conc. NaOH --[Heat]--> CH3OH + HCOONa\n(b) Aldol: 2 CH3CHO --[Dil. NaOH]--> CH3CH(OH)CH2CHO --[Heat, -H2O]--> CH3CH=CHCHO (But-2-enal)\n(c) HVZ: R-CH2-COOH --[(i) X2 / Red P, (ii) H2O]--> R-CH(X)-COOH + HX",
-    "stepMarking": [
-      {
-        "step": "Cannizzaro balanced reaction with alcohol & carboxylate salt",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Aldol addition intermediate and dehydrated product",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "HVZ reaction with Red Phosphorus catalyst condition",
-        "marks": "1.0 Mark"
-      }
+    "answerKey": [
+      "Step 1: Cannizzaro Reaction - 2 HCHO + Conc. NaOH --[Heat]--> CH3OH + HCOONa [1.0 Mark]",
+      "Step 2: Aldol Condensation - 2 CH3CHO --[Dil. NaOH]--> CH3CH(OH)CH2CHO --[Heat, -H2O]--> CH3CH=CHCHO (But-2-enal) [1.0 Mark]",
+      "Step 3: HVZ Reaction - R-CH2-COOH --[(i) X2 / Red P, (ii) H2O]--> R-CH(X)-COOH + HX [1.0 Mark]"
     ],
-    "topperTip": "Explicitly mention whether the reaction occurs in dilute or concentrated alkaline medium."
+    "cbseTip": "Explicitly specify whether the reaction medium is dilute NaOH or concentrated NaOH."
   },
   {
     "id": "c12-math-2024-q1",
@@ -236,28 +171,17 @@ export const pyqDatabase = [
     "year": "2024",
     "set": "Set 1 (Delhi)",
     "chapter": "Integrals",
-    "marks": "5 Marks",
+    "marks": "5",
+    "frequencyBadge": "4x Asked",
+    "frequency": "CBSE 2024, 2023, 2021, 2018",
     "question": "Evaluate the definite integral: Integral from 0 to pi of [ x sin(x) / (1 + cos^2(x)) ] dx.",
-    "solution": "Let I = Integral 0 to pi [x sin x / (1 + cos^2 x)] dx --- (1)\nUsing property f(pi - x): I = Integral 0 to pi [(pi - x) sin x / (1 + cos^2 x)] dx --- (2)\nAdding (1) & (2): 2I = pi * Integral 0 to pi [sin x / (1 + cos^2 x)] dx\nPut cos x = t, sin x dx = -dt; limits from 1 to -1.\n2I = pi * [tan^-1(t)] from -1 to 1 = pi * (pi/2) = pi^2 / 2 => I = pi^2 / 4.",
-    "stepMarking": [
-      {
-        "step": "Application of definite integral property f(a - x)",
-        "marks": "1.5 Marks"
-      },
-      {
-        "step": "Adding equations to eliminate x term: 2I = pi * integral",
-        "marks": "1.5 Marks"
-      },
-      {
-        "step": "Substitution t = cos(x) and limit transformation",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Evaluation using tan^-1 and final boxed result I = pi^2 / 4",
-        "marks": "1.0 Mark"
-      }
+    "answerKey": [
+      "Step 1: Definite Integral Property - Applying Integral 0 to a f(x)dx = Integral 0 to a f(a - x)dx [1.5 Marks]",
+      "Step 2: Adding (1) and (2) - 2I = pi * Integral 0 to pi [sin x / (1 + cos^2 x)] dx [1.5 Marks]",
+      "Step 3: Substitution - Put cos x = t, sin x dx = -dt with limits from 1 to -1 [1.0 Mark]",
+      "Step 4: Final Evaluation - 2I = pi * [tan^-1(t)] from -1 to 1 = pi^2 / 2 => I = pi^2 / 4 [1.0 Mark]"
     ],
-    "topperTip": "State the definite integral property in the margin: Integral 0 to a f(x)dx = Integral 0 to a f(a - x)dx."
+    "cbseTip": "State the definite integral property explicitly in the right-hand margin."
   },
   {
     "id": "c12-bio-2024-q1",
@@ -266,28 +190,17 @@ export const pyqDatabase = [
     "year": "2024",
     "set": "Set 1 (Delhi)",
     "chapter": "Molecular Basis of Inheritance",
-    "marks": "5 Marks",
+    "marks": "5",
+    "frequencyBadge": "3x Asked",
+    "frequency": "CBSE 2024, 2022, 2019",
     "question": "Describe the experiment of Meselson and Stahl that proved DNA replicates semi-conservatively.",
-    "solution": "1. Cultured E. coli in 15NH4Cl heavy medium for multiple generations.\n2. Transferred to 14NH4Cl light medium.\n3. Extracted DNA after Gen I (20 min) -> hybrid intermediate band (15N-14N) on CsCl gradient.\n4. Gen II (40 min) -> equal amounts of light DNA (14N-14N) and hybrid DNA (15N-14N).\nConclusion: DNA replication is semi-conservative.",
-    "stepMarking": [
-      {
-        "step": "Medium preparation with 15N and transfer to 14N",
-        "marks": "1.5 Marks"
-      },
-      {
-        "step": "CsCl density gradient centrifugation technique",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Gen I (20 min) and Gen II (40 min) band observations",
-        "marks": "1.5 Marks"
-      },
-      {
-        "step": "Labeled band diagram & final semi-conservative conclusion",
-        "marks": "1.0 Mark"
-      }
+    "answerKey": [
+      "Step 1: Medium Preparation - Cultured E. coli in 15NH4Cl heavy medium, then transferred to 14NH4Cl light medium [1.5 Marks]",
+      "Step 2: Generation I Observation - After 20 min, extracted DNA yielded hybrid density band (15N-14N) on CsCl gradient [1.5 Marks]",
+      "Step 3: Generation II Observation - After 40 min, equal amounts of light DNA (14N-14N) and hybrid DNA (15N-14N) formed [1.0 Mark]",
+      "Step 4: Conclusion - Proved semi-conservative replication model with labeled centrifuge band diagram [1.0 Mark]"
     ],
-    "topperTip": "Draw the test tubes showing CsCl gradient positions: heavy (bottom), hybrid (middle), light (top)."
+    "cbseTip": "Draw the test tubes showing CsCl gradient band positions: heavy (bottom), hybrid (middle), light (top)."
   },
   {
     "id": "c12-cs-2024-q1",
@@ -296,23 +209,15 @@ export const pyqDatabase = [
     "year": "2024",
     "set": "Set 1 (Delhi)",
     "chapter": "File Handling in Python",
-    "marks": "3 Marks",
+    "marks": "3",
+    "frequencyBadge": "3x Asked",
+    "frequency": "CBSE 2024, 2023, 2021",
     "question": "Write a Python function count_words() that reads \"STORY.TXT\" and counts words starting with letter \"A\" or \"a\".",
-    "solution": "def count_words():\n    count = 0\n    with open(\"STORY.TXT\", \"r\") as file:\n        words = file.read().split()\n        for w in words:\n            if w[0].upper() == \"A\":\n                count += 1\n    print(\"Total words:\", count)",
-    "stepMarking": [
-      {
-        "step": "Correct file opening in read mode using with open()",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Splitting text into words using split()",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Case-insensitive first letter check w[0].upper() == \"A\" and display",
-        "marks": "1.0 Mark"
-      }
+    "answerKey": [
+      "Step 1: File Opening - with open(\"STORY.TXT\", \"r\") as file: to handle automatic closure [1.0 Mark]",
+      "Step 2: Text Extraction - words = file.read().split() to split text into words [1.0 Mark]",
+      "Step 3: Condition Check - for w in words: if w[0].upper() == \"A\": count += 1 and display total count [1.0 Mark]"
     ],
-    "topperTip": "Using with open(...) automatically closes the file handle and prevents memory leaks."
+    "cbseTip": "Using with open(...) ensures file handle is closed even if an exception occurs."
   }
 ];
