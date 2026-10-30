@@ -17,7 +17,7 @@ export default function Header() {
     { name: 'Class 10 OS', path: '/class-10' },
     { name: 'Class 12 OS', path: '/class-12' },
     { name: 'Coaching OS', path: '/teacher/portal' },
-    { name: '5-Year PYQ', path: '/pyq-vault' },
+    { name: 'Solved PYQs', path: '/pyq-vault' },
     { name: 'Price', path: '/pricing' },
     { name: 'CBSE Insights', path: '/blog' }
   ];

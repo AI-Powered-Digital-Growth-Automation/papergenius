@@ -6,7 +6,7 @@ import {
   Download, FileText, Calendar, CheckSquare, ExternalLink
 } from 'lucide-react';
 import { pyqDatabase } from '../../data/pyqData';
-import { previousYearsPapers } from '../../data/downloadPapersData';
+import { previousYearsPapers, OFFICIAL_CBSE_PORTAL } from '../../data/downloadPapersData';
 
 export default function PyqVaultPage() {
   const [activeTab, setActiveTab] = useState('solved-bank'); // 'solved-bank' | 'full-papers'
@@ -162,11 +162,12 @@ export default function PyqVaultPage() {
                 onChange={(e) => setSelectedYear(e.target.value)}
                 className="w-full sm:w-auto bg-[#0C1330] border border-white/10 text-white rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-[#7C3CFF]"
               >
-                <option value="All">All Years (2020-2024)</option>
-                <option value="2024">2024 Board Exam</option>
-                <option value="2023">2023 Board Exam</option>
-                <option value="2022">2022 Board Exam</option>
-                <option value="2020">2020 Board Exam</option>
+                <option value="All">All Years (2022-2026)</option>
+                <option value="2026">2026 Board Exam Series</option>
+                <option value="2025">2025 Board Exam Series</option>
+                <option value="2024">2024 Board Exam Series</option>
+                <option value="2023">2023 Board Exam Series</option>
+                <option value="2022">2022 Board Exam Series</option>
               </select>
             ) : (
               <div className="relative w-full sm:w-64">
@@ -345,27 +346,29 @@ export default function PyqVaultPage() {
                   </div>
 
                   {/* Download Action Buttons */}
-                  <div className="pt-3 border-t border-white/5 grid grid-cols-2 gap-2">
-                    <a
-                      href={paper.paperUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-bold border border-white/10 transition-all hover:border-white/30"
-                    >
-                      <FileText className="w-4 h-4 text-[#67E8F9]" />
-                      <span>Question Paper</span>
-                    </a>
+                                      <div className="pt-3 border-t border-white/5 grid grid-cols-2 gap-2">
+                      <a
+                        href={OFFICIAL_CBSE_PORTAL?.mainPapers || "https://www.cbse.gov.in/cbsenew/question-paper.html"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Access authentic official board question papers on CBSE portal"
+                        className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-bold border border-white/10 transition-all hover:border-cyan-400/50"
+                      >
+                        <ExternalLink className="w-4 h-4 text-[#67E8F9]" />
+                        <span>Question Paper</span>
+                      </a>
 
-                    <a
-                      href={paper.solutionUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#06B6D4]/20 hover:bg-[#06B6D4]/30 text-[#67E8F9] text-xs font-bold border border-[#06B6D4]/40 transition-all"
-                    >
-                      <CheckCircle2 className="w-4 h-4 text-[#67E8F9]" />
-                      <span>Marking Scheme</span>
-                    </a>
-                  </div>
+                      <a
+                        href={paper.grade === 'Class 10' ? (OFFICIAL_CBSE_PORTAL?.class10Sqp || "https://cbseacademic.nic.in/sqp_classx_2024-25.html") : (OFFICIAL_CBSE_PORTAL?.class12Sqp || "https://cbseacademic.nic.in/sqp_classxii_2024-25.html")}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Access official verified sample question papers and marking scheme"
+                        className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#06B6D4]/20 hover:bg-[#06B6D4]/30 text-[#67E8F9] text-xs font-bold border border-[#06B6D4]/40 transition-all"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-[#67E8F9]" />
+                        <span>Marking Scheme</span>
+                      </a>
+                    </div>
                 </div>
               ))}
             </div>

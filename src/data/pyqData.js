@@ -1,146 +1,389 @@
-﻿export const pyqDatabase = [
-  // ================= CLASS 10 SCIENCE =================
-  {
-    id: 'c10-sci-01',
-    grade: 'Class 10',
-    subject: 'Science',
-    chapter: 'Chemical Reactions and Equations',
-    frequency: '5x Repeated (2018, 2019, 2021, 2023, 2024)',
-    frequencyBadge: '5x Board Favorite',
-    marks: 3,
-    type: 'Short Answer',
-    question: 'Why does the colour of copper sulphate solution change when an iron nail is dipped in it? Write the balanced chemical equation and state the type of reaction.',
-    answerKey: [
-      'Step 1 (Reason - 1 Mark): Iron is more reactive than copper (placed above copper in the reactivity series). It displaces copper from copper sulphate solution.',
-      'Step 2 (Equation - 1 Mark): Fe (s) + CuSO4 (aq) [Blue] -> FeSO4 (aq) [Pale Green] + Cu (s) [Brown coating].',
-      'Step 3 (Type - 1 Mark): Displacement Reaction / Single Replacement Reaction.'
-    ],
-    cbseTip: 'Always mention original color (Blue) and final color (Pale green) to secure the presentation half-mark.'
-  },
-  {
-    id: 'c10-sci-02',
-    grade: 'Class 10',
-    subject: 'Science',
-    chapter: 'Light - Reflection and Refraction',
-    frequency: '4x Repeated (2017, 2019, 2022, 2024)',
-    frequencyBadge: 'High Yield',
-    marks: 5,
-    type: 'Long / Numerical',
-    question: 'A convex lens of focal length 15 cm forms an image 10 cm from the lens. How far is the object placed from the lens? Draw the ray diagram.',
-    answerKey: [
-      'Step 1 (Sign convention - 1 Mark): Focal length f = +15 cm (convex lens). Since image is real (or virtual), v = +10 cm (or -10 cm based on case). Here concave/convex virtual image v = -10 cm.',
-      'Step 2 (Formula substitution - 2 Marks): 1/f = 1/v - 1/u => 1/u = 1/v - 1/f = 1/(-10) - 1/15 = -5/30 = -1/6 => u = -30 cm.',
-      'Step 3 (Ray diagram - 2 Marks): Clean ray diagram showing optical centre O, principal focus F1 & F2, with object placed beyond 2F1.'
-    ],
-    cbseTip: 'Never omit directional arrows on light rays. Arrows missing = deduction of 1 full mark in CBSE.'
-  },
-  {
-    id: 'c10-sci-03',
-    grade: 'Class 10',
-    subject: 'Science',
-    chapter: 'Life Processes',
-    frequency: '5x Repeated (2015, 2017, 2019, 2020, 2023)',
-    frequencyBadge: '5x Board Favorite',
-    marks: 3,
-    type: 'Short Answer',
-    question: 'Differentiate between aerobic and anaerobic respiration on the basis of: (i) Presence/absence of oxygen (ii) End products formed (iii) Energy released (ATP yield).',
-    answerKey: [
-      'Tabular Answer (1 Mark per point):',
-      '(i) Oxygen requirement: Aerobic requires molecular O2; Anaerobic occurs in absence of O2.',
-      '(ii) End products: Aerobic produces CO2 + H2O; Anaerobic in yeast produces Ethanol + CO2 (in muscle cells: Lactic acid).',
-      '(iii) ATP Yield: Aerobic yields 36-38 ATP per glucose; Anaerobic yields only 2 ATP.'
-    ],
-    cbseTip: 'Always use a tabular column for differentiation questions. Point-wise paragraphs lose presentation marks.'
-  },
+import { class10Pyqs } from './pyqDataClass10';
 
-  // ================= CLASS 10 MATHEMATICS =================
+export const class12Pyqs = [
   {
-    id: 'c10-math-01',
-    grade: 'Class 10',
-    subject: 'Mathematics',
-    chapter: 'Real Numbers',
-    frequency: '6x Repeated (Guaranteed Board Question)',
-    frequencyBadge: 'Guaranteed 3 Marks',
-    marks: 3,
-    type: 'Proof',
-    question: 'Prove that √5 is an irrational number.',
-    answerKey: [
-      'Step 1 (1 Mark): Assume on the contrary that √5 is rational. Then √5 = a/b where a and b are co-prime integers and b ≠ 0.',
-      'Step 2 (1 Mark): Squaring both sides: 5 = a²/b² => 5b² = a². Therefore 5 divides a², which implies 5 divides a. Let a = 5c for some integer c.',
-      'Step 3 (1 Mark): Substitute: 5b² = (5c)² = 25c² => b² = 5c². Thus 5 divides b², so 5 divides b. This contradicts that a and b are co-prime. Hence, √5 is irrational.'
+    "id": "c12-phy-2024-q1",
+    "grade": "Class 12",
+    "subject": "Physics",
+    "year": "2024",
+    "set": "Set 1 (Delhi)",
+    "chapter": "Ray Optics and Optical Instruments",
+    "marks": "5 Marks",
+    "question": "Derive the Lens Maker's Formula 1/f = (mu - 1)(1/R1 - 1/R2) for a double convex lens of refractive index mu placed in air. State the assumptions made.",
+    "solution": "1. Assumptions: Thin lens, small aperture, paraxial rays from point object.\n2. Surface 1: (mu/v1) - (1/u) = (mu - 1)/R1\n3. Surface 2: (1/v) - (mu/v1) = -(mu - 1)/R2\n4. Adding both: (1/v) - (1/u) = (mu - 1)(1/R1 - 1/R2)\n5. When u = infinity, v = f => 1/f = (mu - 1)(1/R1 - 1/R2). Hence Proved.",
+    "stepMarking": [
+      {
+        "step": "Assumptions and clearly labeled ray diagram with arrows",
+        "marks": "1.5 Marks"
+      },
+      {
+        "step": "Refraction equations for surface 1 and surface 2",
+        "marks": "2.0 Marks"
+      },
+      {
+        "step": "Addition of equations and final boxed lens maker formula",
+        "marks": "1.5 Marks"
+      }
     ],
-    cbseTip: 'Statement "a and b are co-prime" carries an independent half mark. Do not miss it.'
+    "topperTip": "Always box the final formula and state that virtual image I1 acts as the virtual object for the second surface."
   },
   {
-    id: 'c10-math-02',
-    grade: 'Class 10',
-    subject: 'Mathematics',
-    chapter: 'Triangles',
-    frequency: '5x Repeated (2016, 2018, 2019, 2022, 2024)',
-    frequencyBadge: 'Theorem',
-    marks: 5,
-    type: 'Theorem Proof',
-    question: 'State and prove Basic Proportionality Theorem (Thales Theorem).',
-    answerKey: [
-      'Statement (1 Mark): If a line is drawn parallel to one side of a triangle intersecting other two sides, then it divides the two sides in the same ratio.',
-      'Given, To Prove, Construction (1.5 Marks): Triangle ABC, DE || BC. Draw DM ⊥ AC, EN ⊥ AB. Join BE and CD.',
-      'Proof (2.5 Marks): Area(ADE) = 1/2 * AD * EN. Area(BDE) = 1/2 * DB * EN. Ratio = AD/DB. Similarly Area(ADE)/Area(DEC) = AE/EC. Since Area(BDE) = Area(DEC) (same base DE and between parallel lines DE and BC), AD/DB = AE/EC.'
+    "id": "c12-phy-2023-q2",
+    "grade": "Class 12",
+    "subject": "Physics",
+    "year": "2023",
+    "set": "Set 2 (All India)",
+    "chapter": "Electromagnetic Induction",
+    "marks": "3 Marks",
+    "question": "State Lenz's law. A metallic rod of length l is rotated with angular frequency omega in a uniform magnetic field B perpendicular to its plane of rotation. Derive an expression for the induced EMF between the ends of the rod.",
+    "solution": "1. Lenz's Law: The polarity of induced EMF is such that it produces a current opposing the flux change.\n2. For small element dr at distance r: v = r*omega, dE = B*v*dr = B*omega*r*dr.\n3. Integrating from 0 to l: E = Integral [B*omega*r*dr] = (1/2) * B * omega * l^2.",
+    "stepMarking": [
+      {
+        "step": "Lenz's law accurate statement",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Integration setup from 0 to l with dE = B*omega*r*dr",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Integration evaluation and final EMF result: (1/2) B omega l^2",
+        "marks": "1.0 Mark"
+      }
     ],
-    cbseTip: 'Write "Given", "To Prove", and "Construction" with clear headings before starting proof.'
-  },
-
-  // ================= CLASS 12 PHYSICS =================
-  {
-    id: 'c12-phy-01',
-    grade: 'Class 12',
-    subject: 'Physics',
-    chapter: 'Ray Optics & Optical Instruments',
-    frequency: '5x Repeated (2016, 2018, 2019, 2023, 2024)',
-    frequencyBadge: 'Top Derivation',
-    marks: 5,
-    type: 'Derivation',
-    question: 'Derive Lens Maker’s Formula (1/f = (μ - 1)(1/R1 - 1/R2)) for a thin double convex lens.',
-    answerKey: [
-      'Step 1 (Diagram & Assumptions - 1.5 Marks): Thin lens with refractive index μ2 placed in medium μ1. Two spherical surfaces with radii R1 and R2. Ray diagram showing first refraction at surface 1 forming virtual object for surface 2.',
-      'Step 2 (Surface Refractions - 2 Marks): Surface 1: μ2/v1 - μ1/u = (μ2 - μ1)/R1. Surface 2: μ1/v - μ2/v1 = (μ1 - μ2)/R2 = -(μ2 - μ1)/R2.',
-      'Step 3 (Adding equations - 1.5 Marks): Adding gives μ1(1/v - 1/u) = (μ2 - μ1)(1/R1 - 1/R2). Using 1/f = 1/v - 1/u and μ = μ2/μ1: 1/f = (μ - 1)(1/R1 - 1/R2).'
-    ],
-    cbseTip: 'Explicitly state thin-lens approximations (aperture is small, angles are paraxial).'
+    "topperTip": "Lenz's law is a consequence of conservation of energy; note this in your answer."
   },
   {
-    id: 'c12-phy-02',
-    grade: 'Class 12',
-    subject: 'Physics',
-    chapter: 'Electrostatics',
-    frequency: '4x Repeated (2017, 2020, 2022, 2024)',
-    frequencyBadge: 'High Yield',
-    marks: 3,
-    type: 'Derivation',
-    question: 'Using Gauss’s Theorem, derive an expression for the electric field due to an infinitely long straight uniformly charged wire.',
-    answerKey: [
-      'Step 1 (Symmetry & Gaussian surface - 1 Mark): Coaxial cylindrical Gaussian surface of radius r and length l. Flux through flat circular caps is zero as E is perpendicular to area vector.',
-      'Step 2 (Flux calculation - 1 Mark): Φ = E * (2πrl) (curved surface area). Total charge enclosed q = λ * l.',
-      'Step 3 (Gauss Law Equating - 1 Mark): Φ = q / ε0 => E * (2πrl) = (λl) / ε0 => E = λ / (2πε0r).'
+    "id": "c12-chem-2024-q1",
+    "grade": "Class 12",
+    "subject": "Chemistry",
+    "year": "2024",
+    "set": "Set 1 (Delhi)",
+    "chapter": "Aldehydes, Ketones and Carboxylic Acids",
+    "marks": "3 Marks",
+    "question": "Write chemical equations for the following named reactions: (a) Cannizzaro Reaction, (b) Aldol Condensation, (c) Hell-Volhard-Zelinsky (HVZ) Reaction.",
+    "solution": "(a) Cannizzaro: 2 HCHO + Conc. NaOH --[Heat]--> CH3OH + HCOONa\n(b) Aldol: 2 CH3CHO --[Dil. NaOH]--> CH3CH(OH)CH2CHO --[Heat, -H2O]--> CH3CH=CHCHO (But-2-enal)\n(c) HVZ: R-CH2-COOH --[(i) X2 / Red P, (ii) H2O]--> R-CH(X)-COOH + HX",
+    "stepMarking": [
+      {
+        "step": "Cannizzaro balanced reaction with alcohol & carboxylate salt",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Aldol addition intermediate and dehydrated product",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "HVZ reaction with Red Phosphorus catalyst condition",
+        "marks": "1.0 Mark"
+      }
     ],
-    cbseTip: 'Vector notation for electric field direction (radially outward for positive λ) carries half mark.'
+    "topperTip": "Explicitly mention whether the reaction occurs in dilute or concentrated alkaline medium."
   },
-
-  // ================= CLASS 12 CHEMISTRY =================
   {
-    id: 'c12-chem-01',
-    grade: 'Class 12',
-    subject: 'Chemistry',
-    chapter: 'Aldehydes, Ketones and Carboxylic Acids',
-    frequency: '5x Repeated (2015, 2018, 2019, 2022, 2024)',
-    frequencyBadge: 'Named Reactions',
-    marks: 3,
-    type: 'Reactions',
-    question: 'Write chemical equations for the following named organic reactions: (i) Aldol Condensation (ii) Cannizzaro Reaction (iii) Hell-Volhard-Zelinsky (HVZ) Reaction.',
-    answerKey: [
-      '(i) Aldol (1 Mark): 2 CH3CHO --[dil. NaOH]--> CH3-CH(OH)-CH2-CHO --[Heat, -H2O]--> CH3-CH=CH-CHO (But-2-enal).',
-      '(ii) Cannizzaro (1 Mark): 2 HCHO + conc. NaOH -> CH3OH (Methanol) + HCOONa (Sodium formate). Aldehydes without α-hydrogen disproportionate.',
-      '(iii) HVZ Reaction (1 Mark): R-CH2-COOH --[1. X2 / Red P, 2. H2O]--> R-CH(X)-COOH (α-halocarboxylic acid).'
+    "id": "c12-chem-2023-q2",
+    "grade": "Class 12",
+    "subject": "Chemistry",
+    "year": "2023",
+    "set": "Set 3 (All India)",
+    "chapter": "Electrochemistry",
+    "marks": "3 Marks",
+    "question": "Calculate the EMF of the cell at 298 K: Mg(s) | Mg2+(0.001 M) || Cu2+(0.0001 M) | Cu(s). Given E_cell_standard = +2.71 V. [log 10 = 1].",
+    "solution": "Cell reaction: Mg(s) + Cu2+(aq) -> Mg2+(aq) + Cu(s) [n = 2].\nNernst Equation: E_cell = E0 - (0.0591 / 2) * log([Mg2+] / [Cu2+])\nE_cell = 2.71 - 0.02955 * log(0.001 / 0.0001) = 2.71 - 0.02955 * 1 = +2.68 V.",
+    "stepMarking": [
+      {
+        "step": "Balanced cell reaction and identification of n = 2",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Correct statement of Nernst equation with quotient",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Log evaluation and final cell EMF with V unit (+2.68 V)",
+        "marks": "1.0 Mark"
+      }
     ],
-    cbseTip: 'Reagents & catalysts (dil. NaOH vs conc. NaOH vs Red P/X2) must be explicitly written over reaction arrow.'
+    "topperTip": "Always write the positive sign (+2.68 V) for spontaneous galvanic cell potential."
+  },
+  {
+    "id": "c12-math-2024-q1",
+    "grade": "Class 12",
+    "subject": "Mathematics",
+    "year": "2024",
+    "set": "Set 1 (Delhi)",
+    "chapter": "Integrals",
+    "marks": "5 Marks",
+    "question": "Evaluate the definite integral: Integral from 0 to pi of [ x sin(x) / (1 + cos^2(x)) ] dx.",
+    "solution": "Let I = Integral 0 to pi [x sin x / (1 + cos^2 x)] dx --- (1)\nUsing property f(pi - x): I = Integral 0 to pi [(pi - x) sin x / (1 + cos^2 x)] dx --- (2)\nAdding (1) & (2): 2I = pi * Integral 0 to pi [sin x / (1 + cos^2 x)] dx\nPut cos x = t, sin x dx = -dt; limits from 1 to -1.\n2I = pi * [tan^-1(t)] from -1 to 1 = pi * (pi/2) = pi^2 / 2 => I = pi^2 / 4.",
+    "stepMarking": [
+      {
+        "step": "Application of definite integral property f(a - x)",
+        "marks": "1.5 Marks"
+      },
+      {
+        "step": "Adding equations to eliminate x term: 2I = pi * integral",
+        "marks": "1.5 Marks"
+      },
+      {
+        "step": "Substitution t = cos(x) and limit transformation",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Evaluation using tan^-1 and final boxed result I = pi^2 / 4",
+        "marks": "1.0 Mark"
+      }
+    ],
+    "topperTip": "State the definite integral property in the margin: Integral 0 to a f(x)dx = Integral 0 to a f(a - x)dx."
+  },
+  {
+    "id": "c12-math-2023-q2",
+    "grade": "Class 12",
+    "subject": "Mathematics",
+    "year": "2023",
+    "set": "Set 2 (All India)",
+    "chapter": "Three Dimensional Geometry",
+    "marks": "5 Marks",
+    "question": "Find the shortest distance between skew lines: r = (i + 2j + k) + lambda(i - j + k) and r = (2i - j - k) + mu(2i + j + 2k).",
+    "solution": "1. (a2 - a1) = (2-1)i + (-1-2)j + (-1-1)k = i - 3j - 2k\n2. (b1 x b2) = |i j k; 1 -1 1; 2 1 2| = -3i + 0j + 3k = -3i + 3k\n3. |b1 x b2| = sqrt(9 + 9) = 3*sqrt(2)\n4. (b1 x b2) . (a2 - a1) = -3(1) + 3(-2) = -9\n5. Shortest Distance = |-9| / [3*sqrt(2)] = 3 / sqrt(2) = (3*sqrt(2))/2 units.",
+    "stepMarking": [
+      {
+        "step": "Finding vector (a2 - a1) = i - 3j - 2k",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Determinant expansion of (b1 x b2) = -3i + 3k",
+        "marks": "1.5 Marks"
+      },
+      {
+        "step": "Magnitude calculation |b1 x b2| = 3*sqrt(2)",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Shortest distance formula application and final result (3/sqrt(2) units)",
+        "marks": "1.5 Marks"
+      }
+    ],
+    "topperTip": "Always take absolute value |...| for distance and append the word \"units\"."
+  },
+  {
+    "id": "c12-app-math-2024-q1",
+    "grade": "Class 12",
+    "subject": "Applied Mathematics",
+    "year": "2024",
+    "set": "Set 1 (Delhi)",
+    "chapter": "Financial Mathematics",
+    "marks": "3 Marks",
+    "question": "A sinking fund is created for the redemption of debentures of Rs 1,00,000 at the end of 5 years at 8% compound interest p.a. How much money should be deposited annually? [Given (1.08)^5 = 1.4693].",
+    "solution": "Formula: A = R * [((1 + i)^n - 1) / i]\n1,00,000 = R * [(1.4693 - 1) / 0.08] = R * [0.4693 / 0.08] = R * 5.86625\nR = 1,00,000 / 5.86625 = Rs 17,046.66 (approx Rs 17,047).",
+    "stepMarking": [
+      {
+        "step": "Formula declaration for sinking fund amount A",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Substitution of (1.08)^5 = 1.4693 and i = 0.08",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Final accurate annual installment with currency symbol (Rs 17,047)",
+        "marks": "1.0 Mark"
+      }
+    ],
+    "topperTip": "Prefix the currency symbol (Rs) and round off to the nearest rupee."
+  },
+  {
+    "id": "c12-app-math-2023-q2",
+    "grade": "Class 12",
+    "subject": "Applied Mathematics",
+    "year": "2023",
+    "set": "Set 2 (All India)",
+    "chapter": "Linear Programming",
+    "marks": "5 Marks",
+    "question": "Maximize Z = 3x + 5y subject to: x + 2y <= 20, x + y <= 15, x >= 0, y >= 0 graphically.",
+    "solution": "1. Boundary lines: Line 1 (x + 2y = 20), Line 2 (x + y = 15). Intersection point: B(10, 5).\n2. Corner points: O(0,0), A(15,0), B(10,5), C(0,10).\n3. Z values: Z(0,0) = 0, Z(15,0) = 45, Z(10,5) = 30 + 25 = 55, Z(0,10) = 50.\nMaximum value of Z is 55 at (10, 5).",
+    "stepMarking": [
+      {
+        "step": "Accurate graph coordinates and boundary lines",
+        "marks": "1.5 Marks"
+      },
+      {
+        "step": "Shading feasible bounded region and finding corner point (10, 5)",
+        "marks": "1.5 Marks"
+      },
+      {
+        "step": "Corner point evaluation table and maximum Z = 55 declaration",
+        "marks": "2.0 Marks"
+      }
+    ],
+    "topperTip": "Draw the corner points table with column headers: \"Corner Point (x, y)\" and \"Z = 3x + 5y\"."
+  },
+  {
+    "id": "c12-bio-2024-q1",
+    "grade": "Class 12",
+    "subject": "Biology",
+    "year": "2024",
+    "set": "Set 1 (Delhi)",
+    "chapter": "Molecular Basis of Inheritance",
+    "marks": "5 Marks",
+    "question": "Describe the experiment of Meselson and Stahl that proved DNA replicates semi-conservatively.",
+    "solution": "1. Cultured E. coli in 15NH4Cl heavy medium for multiple generations.\n2. Transferred to 14NH4Cl light medium.\n3. Extracted DNA after Gen I (20 min) -> hybrid intermediate band (15N-14N) on CsCl gradient.\n4. Gen II (40 min) -> equal amounts of light DNA (14N-14N) and hybrid DNA (15N-14N).\nConclusion: DNA replication is semi-conservative.",
+    "stepMarking": [
+      {
+        "step": "Medium preparation with 15N and transfer to 14N",
+        "marks": "1.5 Marks"
+      },
+      {
+        "step": "CsCl density gradient centrifugation technique",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Gen I (20 min) and Gen II (40 min) band observations",
+        "marks": "1.5 Marks"
+      },
+      {
+        "step": "Labeled band diagram & final semi-conservative conclusion",
+        "marks": "1.0 Mark"
+      }
+    ],
+    "topperTip": "Draw the test tubes showing CsCl gradient positions: heavy (bottom), hybrid (middle), light (top)."
+  },
+  {
+    "id": "c12-bio-2023-q2",
+    "grade": "Class 12",
+    "subject": "Biology",
+    "year": "2023",
+    "set": "Set 2 (All India)",
+    "chapter": "Biotechnology: Principles and Processes",
+    "marks": "3 Marks",
+    "question": "What is PCR (Polymerase Chain Reaction)? Explain the three main steps involved.",
+    "solution": "PCR is in vitro enzymatic amplification of DNA segments.\n1. Denaturation (94 deg C): DNA strands separate.\n2. Annealing (50-60 deg C): Primers bind to 3' ends.\n3. Extension (72 deg C): Taq polymerase from Thermus aquaticus adds dNTPs.",
+    "stepMarking": [
+      {
+        "step": "Definition and purpose of in vitro amplification",
+        "marks": "0.5 Mark"
+      },
+      {
+        "step": "Denaturation step with temperature (94 deg C)",
+        "marks": "0.5 Mark"
+      },
+      {
+        "step": "Annealing step with primer definition (50-60 deg C)",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Extension with Taq polymerase and Thermus aquaticus source (72 deg C)",
+        "marks": "1.0 Mark"
+      }
+    ],
+    "topperTip": "Mentioning the exact bacterium \"Thermus aquaticus\" is mandatory for full marks in extension."
+  },
+  {
+    "id": "c12-cs-2024-q1",
+    "grade": "Class 12",
+    "subject": "Computer Science",
+    "year": "2024",
+    "set": "Set 1 (Delhi)",
+    "chapter": "File Handling in Python",
+    "marks": "3 Marks",
+    "question": "Write a Python function count_words() that reads \"STORY.TXT\" and counts words starting with letter \"A\" or \"a\".",
+    "solution": "def count_words():\n    count = 0\n    with open(\"STORY.TXT\", \"r\") as file:\n        words = file.read().split()\n        for w in words:\n            if w[0].upper() == \"A\":\n                count += 1\n    print(\"Total words:\", count)",
+    "stepMarking": [
+      {
+        "step": "Correct file opening in read mode using with open()",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Splitting text into words using split()",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Case-insensitive first letter check w[0].upper() == \"A\" and display",
+        "marks": "1.0 Mark"
+      }
+    ],
+    "topperTip": "Using with open(...) automatically closes the file handle and prevents memory leaks."
+  },
+  {
+    "id": "c12-cs-2023-q2",
+    "grade": "Class 12",
+    "subject": "Computer Science",
+    "year": "2023",
+    "set": "Set 2 (All India)",
+    "chapter": "Data Structure: Stacks",
+    "marks": "3 Marks",
+    "question": "Write Push(Stack, item) and Pop(Stack) functions in Python for a list-implemented Stack.",
+    "solution": "def Push(Stack, item):\n    Stack.append(item)\n\ndef Pop(Stack):\n    if len(Stack) == 0:\n        print(\"Underflow: Stack is empty.\")\n        return None\n    return Stack.pop()",
+    "stepMarking": [
+      {
+        "step": "Push function using append()",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Pop underflow condition check len(stack) == 0",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Pop implementation using pop() and return value",
+        "marks": "1.0 Mark"
+      }
+    ],
+    "topperTip": "Handling the Underflow condition in Pop() is strictly checked by examiners."
+  },
+  {
+    "id": "c12-ip-2024-q1",
+    "grade": "Class 12",
+    "subject": "Informatics Practices",
+    "year": "2024",
+    "set": "Set 1 (Delhi)",
+    "chapter": "Data Handling using Pandas",
+    "marks": "3 Marks",
+    "question": "Given DataFrame df with columns [Name, Marks]: (a) Display top 3 rows, (b) Add column \"Result\" with \"Pass\", (c) Rename \"Marks\" to \"Score\".",
+    "solution": "(a) print(df.head(3))\n(b) df[\"Result\"] = \"Pass\"\n(c) df.rename(columns={\"Marks\": \"Score\"}, inplace=True)",
+    "stepMarking": [
+      {
+        "step": "Correct df.head(3) syntax",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Adding column via df[\"Result\"] = \"Pass\"",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "df.rename() with columns dictionary and inplace=True",
+        "marks": "1.0 Mark"
+      }
+    ],
+    "topperTip": "Always remember inplace=True parameter in pandas rename operation."
+  },
+  {
+    "id": "c12-ip-2023-q2",
+    "grade": "Class 12",
+    "subject": "Informatics Practices",
+    "year": "2023",
+    "set": "Set 3 (All India)",
+    "chapter": "Database Query using SQL",
+    "marks": "3 Marks",
+    "question": "Write SQL queries for table Student(RollNo, Name, Stream, Marks): (a) Display Stream and average marks of streams with > 5 students, (b) Display names in descending order of Marks.",
+    "solution": "(a) SELECT Stream, AVG(Marks) FROM Student GROUP BY Stream HAVING COUNT(*) > 5;\n(b) SELECT Name FROM Student ORDER BY Marks DESC;",
+    "stepMarking": [
+      {
+        "step": "SELECT with GROUP BY Stream",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "HAVING COUNT(*) > 5 clause",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "ORDER BY Marks DESC query",
+        "marks": "1.0 Mark"
+      }
+    ],
+    "topperTip": "Never use WHERE clause for group aggregate conditions; always use HAVING."
   }
+];
+
+export const pyqDatabase = [
+  ...class10Pyqs,
+  ...class12Pyqs
 ];

@@ -41,6 +41,7 @@ export default function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/class-10" element={<Class10Page />} />
               <Route path="/class-12" element={<Class12Page />} />
+              <Route path="/teacher/portal" element={<TeacherPage />} />
               <Route path="/pricing" element={<PricingPage />} />
               <Route path="/predictor" element={<PercentagePredictorPage />} />
               <Route path="/pyq-vault" element={<PyqVaultPage />} />
@@ -66,14 +67,7 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/teacher/portal"
-                element={
-                  <ProtectedRoute allowedRoles={['teacher']}>
-                    <TeacherPage />
-                  </ProtectedRoute>
-                }
-              />
+
               <Route
                 path="/teacher/create-paper"
                 element={
