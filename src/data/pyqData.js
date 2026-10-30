@@ -1,6 +1,156 @@
-import { class10Pyqs } from './pyqDataClass10';
-
-export const class12Pyqs = [
+export const pyqDatabase = [
+  {
+    "id": "c10-sci-2024-q1",
+    "grade": "Class 10",
+    "subject": "Science",
+    "year": "2024",
+    "set": "Set 1 (Delhi)",
+    "chapter": "Light - Reflection and Refraction",
+    "marks": "3 Marks",
+    "question": "A convex lens of focal length 20 cm produces a magnified virtual as well as real image. Where should the object be placed in each case? Draw ray diagram for virtual image.",
+    "solution": "1. Real Magnified Image: Placed between F1 and 2F1 (20 cm to 40 cm from lens).\n2. Virtual Magnified Image: Placed between F1 and O (distance < 20 cm).\n3. Ray Diagram: Parallel ray passes through F2; optical center ray goes undeviated. Back-extensions meet to form virtual erect image on the same side as object.",
+    "stepMarking": [
+      {
+        "step": "Object position for real magnified (between F and 2F)",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Object position for virtual magnified (between O and F)",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Ray diagram with directional arrowheads & dotted virtual lines",
+        "marks": "1.0 Mark"
+      }
+    ],
+    "topperTip": "In optics ray diagrams, forgetting arrowheads results in a mandatory 0.5-mark deduction."
+  },
+  {
+    "id": "c10-sci-2023-q2",
+    "grade": "Class 10",
+    "subject": "Science",
+    "year": "2023",
+    "set": "Set 2 (All India)",
+    "chapter": "Chemical Reactions and Equations",
+    "marks": "3 Marks",
+    "question": "On heating green ferrous sulphate crystals: (a) What colour change occurs? (b) Name the gases released and write their smell. (c) Write balanced equation.",
+    "solution": "(a) Green crystals turn white (loss of water of crystallization) and finally reddish-brown (Fe2O3).\n(b) Sulphur dioxide (SO2) and Sulphur trioxide (SO3) are released with choking smell of burning sulphur.\n(c) 2 FeSO4 (s) --[Heat]--> Fe2O3 (s) + SO2 (g) + SO3 (g)",
+    "stepMarking": [
+      {
+        "step": "Colour change to reddish-brown (Fe2O3)",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Names of gases (SO2, SO3) with characteristic smell",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Balanced equation with heat condition & state symbols",
+        "marks": "1.0 Mark"
+      }
+    ],
+    "topperTip": "Always write state symbols (s, g) and heat above the reaction arrow."
+  },
+  {
+    "id": "c10-math-std-2024-q1",
+    "grade": "Class 10",
+    "subject": "Mathematics Standard",
+    "year": "2024",
+    "set": "Set 1 (Delhi)",
+    "chapter": "Triangles",
+    "marks": "5 Marks",
+    "question": "State and prove Basic Proportionality Theorem (Thales Theorem).",
+    "solution": "Statement: If a line is drawn parallel to one side of a triangle intersecting other two sides, it divides them in the same ratio.\nProof:\nArea(ADE)/Area(BDE) = (1/2 * AD * EN)/(1/2 * DB * EN) = AD/DB\nArea(ADE)/Area(CDE) = (1/2 * AE * DM)/(1/2 * EC * DM) = AE/EC\nSince triangles BDE & CDE lie on same base DE and between same parallels DE & BC:\nArea(BDE) = Area(CDE) => AD/DB = AE/EC. Hence Proved.",
+    "stepMarking": [
+      {
+        "step": "Statement & accurate labeled figure",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Given, To Prove, and Construction statements",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Ratio of areas proof",
+        "marks": "1.5 Marks"
+      },
+      {
+        "step": "Same base and parallels justification & conclusion",
+        "marks": "1.5 Marks"
+      }
+    ],
+    "topperTip": "Box the final conclusion AD/DB = AE/EC."
+  },
+  {
+    "id": "c10-math-std-2023-q2",
+    "grade": "Class 10",
+    "subject": "Mathematics Standard",
+    "year": "2023",
+    "set": "Set 3 (All India)",
+    "chapter": "Introduction to Trigonometry",
+    "marks": "3 Marks",
+    "question": "Prove that: (sin theta - 2 sin^3 theta) / (2 cos^3 theta - cos theta) = tan theta.",
+    "solution": "LHS = [sin theta (1 - 2 sin^2 theta)] / [cos theta (2 cos^2 theta - 1)]\n= tan theta * [ (1 - 2(1 - cos^2 theta)) / (2 cos^2 theta - 1) ]\n= tan theta * [ (2 cos^2 theta - 1) / (2 cos^2 theta - 1) ]\n= tan theta = RHS. Hence Proved.",
+    "stepMarking": [
+      {
+        "step": "Factoring sin theta and cos theta",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Substituting sin^2 theta = 1 - cos^2 theta",
+        "marks": "1.0 Mark"
+      },
+      {
+        "step": "Simplification to tan theta = RHS",
+        "marks": "1.0 Mark"
+      }
+    ],
+    "topperTip": "State the identity used: sin^2 theta + cos^2 theta = 1."
+  },
+  {
+    "id": "c10-sst-2024-q1",
+    "grade": "Class 10",
+    "subject": "Social Science",
+    "year": "2024",
+    "set": "Set 1 (Delhi)",
+    "chapter": "Nationalism in India",
+    "marks": "5 Marks",
+    "question": "Why did Mahatma Gandhi launch the Non-Cooperation Movement? Why did he withdraw it in 1922?",
+    "solution": "Causes: 1. Outrage against Rowlatt Act (1919). 2. Jallianwala Bagh massacre (13 April 1919). 3. Khilafat issue to unite Hindus & Muslims.\nWithdrawal: In Feb 1922, Chauri Chaura incident in Gorakhpur turned violent where 22 policemen were killed. Gandhiji felt satyagrahis needed training before mass agitation.",
+    "stepMarking": [
+      {
+        "step": "3 launch causes (Rowlatt, Jallianwala, Khilafat)",
+        "marks": "3.0 Marks"
+      },
+      {
+        "step": "Chauri Chaura violent event & satyagrahi training need",
+        "marks": "2.0 Marks"
+      }
+    ],
+    "topperTip": "Write answers under clear bold sub-headings with numbered points."
+  },
+  {
+    "id": "c10-eng-2024-q1",
+    "grade": "Class 10",
+    "subject": "English Language and Literature",
+    "year": "2024",
+    "set": "Set 1 (Delhi)",
+    "chapter": "A Letter to God",
+    "marks": "3 Marks",
+    "question": "Why did Lencho write a letter to God? How did the postmaster react?",
+    "solution": "Lencho wrote the letter requesting 100 pesos because a hailstorm destroyed his entire ripe cornfield, leaving his family facing starvation. The postmaster was deeply moved by Lencho's unshakeable faith and collected 70 pesos from colleagues to send him signed as \"God\".",
+    "stepMarking": [
+      {
+        "step": "Crop destruction & demand for 100 pesos",
+        "marks": "1.5 Marks"
+      },
+      {
+        "step": "Postmaster collection of 70 pesos preserving Lencho's faith",
+        "marks": "1.5 Marks"
+      }
+    ],
+    "topperTip": "Mention the exact figure: 70 pesos collected out of 100 requested."
+  },
   {
     "id": "c12-phy-2024-q1",
     "grade": "Class 12",
@@ -9,8 +159,8 @@ export const class12Pyqs = [
     "set": "Set 1 (Delhi)",
     "chapter": "Ray Optics and Optical Instruments",
     "marks": "5 Marks",
-    "question": "Derive the Lens Maker's Formula 1/f = (mu - 1)(1/R1 - 1/R2) for a double convex lens of refractive index mu placed in air. State the assumptions made.",
-    "solution": "1. Assumptions: Thin lens, small aperture, paraxial rays from point object.\n2. Surface 1: (mu/v1) - (1/u) = (mu - 1)/R1\n3. Surface 2: (1/v) - (mu/v1) = -(mu - 1)/R2\n4. Adding both: (1/v) - (1/u) = (mu - 1)(1/R1 - 1/R2)\n5. When u = infinity, v = f => 1/f = (mu - 1)(1/R1 - 1/R2). Hence Proved.",
+    "question": "Derive the Lens Maker's Formula 1/f = (mu - 1)(1/R1 - 1/R2) for a double convex lens of refractive index mu placed in air.",
+    "solution": "Assumptions: Thin lens, small aperture, paraxial rays from point object.\nSurface 1: (mu/v1) - (1/u) = (mu - 1)/R1\nSurface 2: (1/v) - (mu/v1) = -(mu - 1)/R2\nAdding both equations: (1/v) - (1/u) = (mu - 1)(1/R1 - 1/R2)\nBy definition, when u = infinity, v = f => 1/f = (mu - 1)(1/R1 - 1/R2). Hence Proved.",
     "stepMarking": [
       {
         "step": "Assumptions and clearly labeled ray diagram with arrows",
@@ -25,7 +175,7 @@ export const class12Pyqs = [
         "marks": "1.5 Marks"
       }
     ],
-    "topperTip": "Always box the final formula and state that virtual image I1 acts as the virtual object for the second surface."
+    "topperTip": "Always box the final formula and state that virtual image I1 acts as virtual object for surface 2."
   },
   {
     "id": "c12-phy-2023-q2",
@@ -35,8 +185,8 @@ export const class12Pyqs = [
     "set": "Set 2 (All India)",
     "chapter": "Electromagnetic Induction",
     "marks": "3 Marks",
-    "question": "State Lenz's law. A metallic rod of length l is rotated with angular frequency omega in a uniform magnetic field B perpendicular to its plane of rotation. Derive an expression for the induced EMF between the ends of the rod.",
-    "solution": "1. Lenz's Law: The polarity of induced EMF is such that it produces a current opposing the flux change.\n2. For small element dr at distance r: v = r*omega, dE = B*v*dr = B*omega*r*dr.\n3. Integrating from 0 to l: E = Integral [B*omega*r*dr] = (1/2) * B * omega * l^2.",
+    "question": "State Lenz's law. A metallic rod of length l rotates with angular frequency omega in a uniform magnetic field B perpendicular to rotation plane. Derive induced EMF.",
+    "solution": "1. Lenz's Law: The polarity of induced EMF opposes the magnetic flux change causing it.\n2. Motional EMF: For element dr at distance r, v = r*omega, dE = B*v*dr = B*omega*r*dr.\n3. Integrating from 0 to l: E = Integral [B*omega*r*dr] = (1/2) * B * omega * l^2.",
     "stepMarking": [
       {
         "step": "Lenz's law accurate statement",
@@ -47,11 +197,11 @@ export const class12Pyqs = [
         "marks": "1.0 Mark"
       },
       {
-        "step": "Integration evaluation and final EMF result: (1/2) B omega l^2",
+        "step": "Final evaluated EMF: (1/2) B omega l^2",
         "marks": "1.0 Mark"
       }
     ],
-    "topperTip": "Lenz's law is a consequence of conservation of energy; note this in your answer."
+    "topperTip": "Lenz's law is a consequence of conservation of energy."
   },
   {
     "id": "c12-chem-2024-q1",
@@ -61,7 +211,7 @@ export const class12Pyqs = [
     "set": "Set 1 (Delhi)",
     "chapter": "Aldehydes, Ketones and Carboxylic Acids",
     "marks": "3 Marks",
-    "question": "Write chemical equations for the following named reactions: (a) Cannizzaro Reaction, (b) Aldol Condensation, (c) Hell-Volhard-Zelinsky (HVZ) Reaction.",
+    "question": "Write chemical equations for: (a) Cannizzaro Reaction, (b) Aldol Condensation, (c) Hell-Volhard-Zelinsky (HVZ) Reaction.",
     "solution": "(a) Cannizzaro: 2 HCHO + Conc. NaOH --[Heat]--> CH3OH + HCOONa\n(b) Aldol: 2 CH3CHO --[Dil. NaOH]--> CH3CH(OH)CH2CHO --[Heat, -H2O]--> CH3CH=CHCHO (But-2-enal)\n(c) HVZ: R-CH2-COOH --[(i) X2 / Red P, (ii) H2O]--> R-CH(X)-COOH + HX",
     "stepMarking": [
       {
@@ -78,32 +228,6 @@ export const class12Pyqs = [
       }
     ],
     "topperTip": "Explicitly mention whether the reaction occurs in dilute or concentrated alkaline medium."
-  },
-  {
-    "id": "c12-chem-2023-q2",
-    "grade": "Class 12",
-    "subject": "Chemistry",
-    "year": "2023",
-    "set": "Set 3 (All India)",
-    "chapter": "Electrochemistry",
-    "marks": "3 Marks",
-    "question": "Calculate the EMF of the cell at 298 K: Mg(s) | Mg2+(0.001 M) || Cu2+(0.0001 M) | Cu(s). Given E_cell_standard = +2.71 V. [log 10 = 1].",
-    "solution": "Cell reaction: Mg(s) + Cu2+(aq) -> Mg2+(aq) + Cu(s) [n = 2].\nNernst Equation: E_cell = E0 - (0.0591 / 2) * log([Mg2+] / [Cu2+])\nE_cell = 2.71 - 0.02955 * log(0.001 / 0.0001) = 2.71 - 0.02955 * 1 = +2.68 V.",
-    "stepMarking": [
-      {
-        "step": "Balanced cell reaction and identification of n = 2",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Correct statement of Nernst equation with quotient",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Log evaluation and final cell EMF with V unit (+2.68 V)",
-        "marks": "1.0 Mark"
-      }
-    ],
-    "topperTip": "Always write the positive sign (+2.68 V) for spontaneous galvanic cell potential."
   },
   {
     "id": "c12-math-2024-q1",
@@ -136,88 +260,6 @@ export const class12Pyqs = [
     "topperTip": "State the definite integral property in the margin: Integral 0 to a f(x)dx = Integral 0 to a f(a - x)dx."
   },
   {
-    "id": "c12-math-2023-q2",
-    "grade": "Class 12",
-    "subject": "Mathematics",
-    "year": "2023",
-    "set": "Set 2 (All India)",
-    "chapter": "Three Dimensional Geometry",
-    "marks": "5 Marks",
-    "question": "Find the shortest distance between skew lines: r = (i + 2j + k) + lambda(i - j + k) and r = (2i - j - k) + mu(2i + j + 2k).",
-    "solution": "1. (a2 - a1) = (2-1)i + (-1-2)j + (-1-1)k = i - 3j - 2k\n2. (b1 x b2) = |i j k; 1 -1 1; 2 1 2| = -3i + 0j + 3k = -3i + 3k\n3. |b1 x b2| = sqrt(9 + 9) = 3*sqrt(2)\n4. (b1 x b2) . (a2 - a1) = -3(1) + 3(-2) = -9\n5. Shortest Distance = |-9| / [3*sqrt(2)] = 3 / sqrt(2) = (3*sqrt(2))/2 units.",
-    "stepMarking": [
-      {
-        "step": "Finding vector (a2 - a1) = i - 3j - 2k",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Determinant expansion of (b1 x b2) = -3i + 3k",
-        "marks": "1.5 Marks"
-      },
-      {
-        "step": "Magnitude calculation |b1 x b2| = 3*sqrt(2)",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Shortest distance formula application and final result (3/sqrt(2) units)",
-        "marks": "1.5 Marks"
-      }
-    ],
-    "topperTip": "Always take absolute value |...| for distance and append the word \"units\"."
-  },
-  {
-    "id": "c12-app-math-2024-q1",
-    "grade": "Class 12",
-    "subject": "Applied Mathematics",
-    "year": "2024",
-    "set": "Set 1 (Delhi)",
-    "chapter": "Financial Mathematics",
-    "marks": "3 Marks",
-    "question": "A sinking fund is created for the redemption of debentures of Rs 1,00,000 at the end of 5 years at 8% compound interest p.a. How much money should be deposited annually? [Given (1.08)^5 = 1.4693].",
-    "solution": "Formula: A = R * [((1 + i)^n - 1) / i]\n1,00,000 = R * [(1.4693 - 1) / 0.08] = R * [0.4693 / 0.08] = R * 5.86625\nR = 1,00,000 / 5.86625 = Rs 17,046.66 (approx Rs 17,047).",
-    "stepMarking": [
-      {
-        "step": "Formula declaration for sinking fund amount A",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Substitution of (1.08)^5 = 1.4693 and i = 0.08",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Final accurate annual installment with currency symbol (Rs 17,047)",
-        "marks": "1.0 Mark"
-      }
-    ],
-    "topperTip": "Prefix the currency symbol (Rs) and round off to the nearest rupee."
-  },
-  {
-    "id": "c12-app-math-2023-q2",
-    "grade": "Class 12",
-    "subject": "Applied Mathematics",
-    "year": "2023",
-    "set": "Set 2 (All India)",
-    "chapter": "Linear Programming",
-    "marks": "5 Marks",
-    "question": "Maximize Z = 3x + 5y subject to: x + 2y <= 20, x + y <= 15, x >= 0, y >= 0 graphically.",
-    "solution": "1. Boundary lines: Line 1 (x + 2y = 20), Line 2 (x + y = 15). Intersection point: B(10, 5).\n2. Corner points: O(0,0), A(15,0), B(10,5), C(0,10).\n3. Z values: Z(0,0) = 0, Z(15,0) = 45, Z(10,5) = 30 + 25 = 55, Z(0,10) = 50.\nMaximum value of Z is 55 at (10, 5).",
-    "stepMarking": [
-      {
-        "step": "Accurate graph coordinates and boundary lines",
-        "marks": "1.5 Marks"
-      },
-      {
-        "step": "Shading feasible bounded region and finding corner point (10, 5)",
-        "marks": "1.5 Marks"
-      },
-      {
-        "step": "Corner point evaluation table and maximum Z = 55 declaration",
-        "marks": "2.0 Marks"
-      }
-    ],
-    "topperTip": "Draw the corner points table with column headers: \"Corner Point (x, y)\" and \"Z = 3x + 5y\"."
-  },
-  {
     "id": "c12-bio-2024-q1",
     "grade": "Class 12",
     "subject": "Biology",
@@ -248,36 +290,6 @@ export const class12Pyqs = [
     "topperTip": "Draw the test tubes showing CsCl gradient positions: heavy (bottom), hybrid (middle), light (top)."
   },
   {
-    "id": "c12-bio-2023-q2",
-    "grade": "Class 12",
-    "subject": "Biology",
-    "year": "2023",
-    "set": "Set 2 (All India)",
-    "chapter": "Biotechnology: Principles and Processes",
-    "marks": "3 Marks",
-    "question": "What is PCR (Polymerase Chain Reaction)? Explain the three main steps involved.",
-    "solution": "PCR is in vitro enzymatic amplification of DNA segments.\n1. Denaturation (94 deg C): DNA strands separate.\n2. Annealing (50-60 deg C): Primers bind to 3' ends.\n3. Extension (72 deg C): Taq polymerase from Thermus aquaticus adds dNTPs.",
-    "stepMarking": [
-      {
-        "step": "Definition and purpose of in vitro amplification",
-        "marks": "0.5 Mark"
-      },
-      {
-        "step": "Denaturation step with temperature (94 deg C)",
-        "marks": "0.5 Mark"
-      },
-      {
-        "step": "Annealing step with primer definition (50-60 deg C)",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Extension with Taq polymerase and Thermus aquaticus source (72 deg C)",
-        "marks": "1.0 Mark"
-      }
-    ],
-    "topperTip": "Mentioning the exact bacterium \"Thermus aquaticus\" is mandatory for full marks in extension."
-  },
-  {
     "id": "c12-cs-2024-q1",
     "grade": "Class 12",
     "subject": "Computer Science",
@@ -302,88 +314,5 @@ export const class12Pyqs = [
       }
     ],
     "topperTip": "Using with open(...) automatically closes the file handle and prevents memory leaks."
-  },
-  {
-    "id": "c12-cs-2023-q2",
-    "grade": "Class 12",
-    "subject": "Computer Science",
-    "year": "2023",
-    "set": "Set 2 (All India)",
-    "chapter": "Data Structure: Stacks",
-    "marks": "3 Marks",
-    "question": "Write Push(Stack, item) and Pop(Stack) functions in Python for a list-implemented Stack.",
-    "solution": "def Push(Stack, item):\n    Stack.append(item)\n\ndef Pop(Stack):\n    if len(Stack) == 0:\n        print(\"Underflow: Stack is empty.\")\n        return None\n    return Stack.pop()",
-    "stepMarking": [
-      {
-        "step": "Push function using append()",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Pop underflow condition check len(stack) == 0",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Pop implementation using pop() and return value",
-        "marks": "1.0 Mark"
-      }
-    ],
-    "topperTip": "Handling the Underflow condition in Pop() is strictly checked by examiners."
-  },
-  {
-    "id": "c12-ip-2024-q1",
-    "grade": "Class 12",
-    "subject": "Informatics Practices",
-    "year": "2024",
-    "set": "Set 1 (Delhi)",
-    "chapter": "Data Handling using Pandas",
-    "marks": "3 Marks",
-    "question": "Given DataFrame df with columns [Name, Marks]: (a) Display top 3 rows, (b) Add column \"Result\" with \"Pass\", (c) Rename \"Marks\" to \"Score\".",
-    "solution": "(a) print(df.head(3))\n(b) df[\"Result\"] = \"Pass\"\n(c) df.rename(columns={\"Marks\": \"Score\"}, inplace=True)",
-    "stepMarking": [
-      {
-        "step": "Correct df.head(3) syntax",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "Adding column via df[\"Result\"] = \"Pass\"",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "df.rename() with columns dictionary and inplace=True",
-        "marks": "1.0 Mark"
-      }
-    ],
-    "topperTip": "Always remember inplace=True parameter in pandas rename operation."
-  },
-  {
-    "id": "c12-ip-2023-q2",
-    "grade": "Class 12",
-    "subject": "Informatics Practices",
-    "year": "2023",
-    "set": "Set 3 (All India)",
-    "chapter": "Database Query using SQL",
-    "marks": "3 Marks",
-    "question": "Write SQL queries for table Student(RollNo, Name, Stream, Marks): (a) Display Stream and average marks of streams with > 5 students, (b) Display names in descending order of Marks.",
-    "solution": "(a) SELECT Stream, AVG(Marks) FROM Student GROUP BY Stream HAVING COUNT(*) > 5;\n(b) SELECT Name FROM Student ORDER BY Marks DESC;",
-    "stepMarking": [
-      {
-        "step": "SELECT with GROUP BY Stream",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "HAVING COUNT(*) > 5 clause",
-        "marks": "1.0 Mark"
-      },
-      {
-        "step": "ORDER BY Marks DESC query",
-        "marks": "1.0 Mark"
-      }
-    ],
-    "topperTip": "Never use WHERE clause for group aggregate conditions; always use HAVING."
   }
-];
-
-export const pyqDatabase = [
-  ...class10Pyqs,
-  ...class12Pyqs
 ];
