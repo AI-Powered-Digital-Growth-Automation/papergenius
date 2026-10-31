@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Copy, Printer, CheckCircle2 } from 'lucide-react';
 
 export default function PaperCanvas({ 
@@ -122,10 +122,30 @@ export default function PaperCanvas({
           ))}
         </div>
 
-        {/* Footer */}
-        <div className="mt-10 pt-3 border-t border-slate-300 flex justify-between items-center text-xs text-slate-500 font-mono relative z-10">
-          <span>Powered by PaperGenius CBSE Board OS</span>
-          <span>Set: {activeSet} | Anti-Cheat Encrypted</span>
+                {/* Verification Footer with Dynamic QR Code */}
+        <div className="mt-8 pt-4 border-t-2 border-slate-400 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono relative z-10 print:mt-6 print:pt-3">
+          <div className="space-y-1 text-slate-700 text-left">
+            <div className="font-bold text-black uppercase tracking-wider flex items-center gap-2">
+              <span>Set: {activeSet}</span>
+              <span>•</span>
+              <span className="text-emerald-700">CBSE Blueprint Aligned</span>
+            </div>
+            <p className="text-[11px] text-slate-600">Scan QR code using any smartphone camera for step-wise marking key & model solutions.</p>
+            <p className="text-[10px] text-slate-400">Powered by PaperGenius CBSE Exam OS • {formData.coachingName || 'Coaching Institute'}</p>
+          </div>
+
+          {/* Real Dynamic QR Verification Code */}
+          <div className="flex items-center gap-2.5 shrink-0 border border-slate-300 p-2 rounded-xl bg-slate-50 print:bg-white print:border-slate-400">
+            <div className="text-right">
+              <span className="block text-[10px] font-bold text-black uppercase leading-tight">Scan for</span>
+              <span className="block text-[10px] font-black text-cyan-700 uppercase leading-tight">Answer Key</span>
+            </div>
+            <img
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent(`https://papergenius.in/pyq-vault?ref=paper_${activeSet}`)}`}
+              alt="Scan for Answer Key QR Code"
+              className="w-14 h-14 object-contain print:w-14 print:h-14"
+            />
+          </div>
         </div>
 
       </div>

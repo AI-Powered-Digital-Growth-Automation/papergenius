@@ -18,16 +18,17 @@ export const AuthProvider = ({ children }) => {
     return sid;
   });
 
-  // Coaching Subscription Profile
+  // Coaching Subscription Profile - Default is Strictly Free Starter Trial (2 Papers)
   const [coachingSubscription, setCoachingSubscription] = useState({
-    instituteName: 'Apex Science Academy & Coaching',
-    directorName: 'Gulzar Ahmed (Director)',
-    directorEmail: 'digitalgulzarservices@gmail.com',
-    plan: 'Coaching Director Pro',
-    papersGeneratedThisMonth: 14,
-    papersQuota: 150,
-    canUseWatermark: true,
-    canUseMultiSets: true,
+    instituteName: 'Coaching / Tuition Institute',
+    directorName: 'Teacher',
+    directorEmail: '',
+    plan: 'Starter Trial',
+    isPremium: false,
+    papersGeneratedThisMonth: 0,
+    papersQuota: 2, // 2 lifetime free test papers
+    canUseWatermark: false, // Locked until Tuition Master or Director Pro
+    canUseMultiSets: false, // Locked until Director Pro
     canGenerateOMR: true
   });
 

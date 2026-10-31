@@ -195,7 +195,7 @@ export default function PyqVaultPage() {
             </div>
 
             {filteredQuestions.length > 0 ? (
-              filteredQuestions.map((item) => {
+              filteredQuestions.map((item, idx) => {
                 const isExpanded = expandedId === item.id;
                 return (
                   <div
@@ -271,29 +271,54 @@ export default function PyqVaultPage() {
 
                     {isExpanded && (
                       <div className="p-5 sm:p-6 bg-[#0C1330] border-t border-[rgba(140,120,255,0.2)] space-y-4">
-                        <div className="space-y-2">
-                          <div className="text-xs font-mono uppercase tracking-widest text-[#5EE7FF] font-bold flex items-center gap-1.5">
-                            <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
-                            <span>Official Step-by-Step Marking Allocation</span>
-                          </div>
-                          <div className="space-y-2 pt-1">
-                            {item.answerKey.map((step, sIdx) => (
-                              <div
-                                key={sIdx}
-                                className="p-3 rounded-xl bg-[#080D24] border border-white/5 text-xs sm:text-sm text-[#E2E8F0] leading-relaxed"
-                              >
-                                {step}
+                        {idx < 2 ? (
+                          <>
+                            <div className="space-y-2">
+                              <div className="text-xs font-mono uppercase tracking-widest text-[#5EE7FF] font-bold flex items-center gap-1.5">
+                                <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
+                                <span>Official Step-by-Step Marking Allocation (Free Sample)</span>
                               </div>
-                            ))}
-                          </div>
-                        </div>
+                              <div className="space-y-2 pt-1">
+                                {item.answerKey.map((step, sIdx) => (
+                                  <div
+                                    key={sIdx}
+                                    className="p-3 rounded-xl bg-[#080D24] border border-white/5 text-xs sm:text-sm text-[#E2E8F0] leading-relaxed"
+                                  >
+                                    {step}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
 
-                        {item.cbseTip && (
-                          <div className="p-3.5 rounded-xl bg-[#7C3CFF]/15 border border-[#7C3CFF]/30 flex items-start gap-2.5">
-                            <Award className="w-4 h-4 text-[#C4B5FD] shrink-0 mt-0.5" />
-                            <div className="text-xs text-[#DDD6FE]">
-                              <strong className="text-white">CBSE Examiner Tip: </strong>
-                              {item.cbseTip}
+                            {item.cbseTip && (
+                              <div className="p-3.5 rounded-xl bg-[#7C3CFF]/15 border border-[#7C3CFF]/30 flex items-start gap-2.5">
+                                <Award className="w-4 h-4 text-[#C4B5FD] shrink-0 mt-0.5" />
+                                <div className="text-xs text-[#DDD6FE]">
+                                  <strong className="text-white">CBSE Examiner Tip: </strong>
+                                  {item.cbseTip}
+                                </div>
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <div className="p-6 rounded-2xl bg-gradient-to-r from-[#1E1145] to-[#0A1A2E] border border-[#7C3CFF]/40 text-center space-y-4">
+                            <div className="w-12 h-12 rounded-2xl bg-[#7C3CFF]/20 text-[#A78BFA] flex items-center justify-center mx-auto">
+                              <Sparkles className="w-6 h-6 text-cyan-400" />
+                            </div>
+                            <div className="space-y-1">
+                              <h4 className="text-base sm:text-lg font-bold text-white">Full Step-Wise Solution Locked</h4>
+                              <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto">
+                                Free plan includes first 2 solved sample questions. Unlock all 10-year step solutions, formula roadmaps, and topper secrets with Board Pass.
+                              </p>
+                            </div>
+                            <div className="pt-2">
+                              <Link
+                                to="/pricing"
+                                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#7C3CFF] to-[#06B6D4] text-white text-xs font-bold shadow-lg hover:opacity-95 transition-all"
+                              >
+                                <span>Unlock Complete PYQ Bank (From ₹199)</span>
+                                <ArrowRight className="w-4 h-4" />
+                              </Link>
                             </div>
                           </div>
                         )}
