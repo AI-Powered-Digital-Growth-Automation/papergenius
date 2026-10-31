@@ -89,6 +89,10 @@ export default function CoachingPricingGrid({ onSelectPlan }) {
               <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>Auto-Generated 20-100Q OMR Sheets</span>
             </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span><strong>Dynamic QR Code on Question Paper</strong> (Instant Solutions)</span>
+            </li>
           </ul>
         </div>
 
@@ -140,6 +144,10 @@ export default function CoachingPricingGrid({ onSelectPlan }) {
             <li className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>Multi-Faculty Batch Vault & Printable OMR Sheets</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span><strong>Dynamic QR Code on Question Paper</strong> (Anti-Cheat Set A/B/C)</span>
             </li>
             <li className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />

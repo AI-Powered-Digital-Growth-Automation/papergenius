@@ -177,9 +177,12 @@ export default function AdminDashboardPage() {
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-black text-white">
-            Digital Gulzar Master Command Center
-          </h1>
+                    <div className="flex items-center gap-3 mb-2">
+            <img src="/logo.png" alt="PaperGenius Logo" className="w-10 h-10 object-contain rounded-xl shadow-lg" />
+            <h1 className="text-2xl sm:text-3xl font-black text-white">
+              Digital Gulzar Master Command Center
+            </h1>
+          </div>
           <p className="text-xs sm:text-sm text-[#94A3B8]">
             Manage platform subscriptions, manual customer quota unlocks, and blog publication.
           </p>
