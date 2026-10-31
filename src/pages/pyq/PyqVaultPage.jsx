@@ -8,6 +8,7 @@ import {
 import { pyqDatabase } from '../../data/pyqData';
 import { previousYearsPapers, OFFICIAL_CBSE_PORTAL } from '../../data/downloadPapersData';
 
+
 export default function PyqVaultPage() {
   const [activeTab, setActiveTab] = useState('solved-bank'); // 'solved-bank' | 'full-papers'
   const [selectedGrade, setSelectedGrade] = useState('All');

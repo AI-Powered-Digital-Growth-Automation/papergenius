@@ -9,6 +9,7 @@ import {
 import CoachingFreeFeatures from '../../components/coaching/CoachingFreeFeatures';
 import CoachingPremiumFeatures from '../../components/coaching/CoachingPremiumFeatures';
 import CoachingFaqSection from '../../components/coaching/CoachingFaqSection';
+import CoachingVisualShowcase from '../../components/coaching/CoachingVisualShowcase';
 
 export default function TeacherPage() {
   const quickPillars = [
@@ -106,6 +107,8 @@ export default function TeacherPage() {
       </section>
 
       {/* 3. FREE COACHING FEATURES (2x3 GRID) */}
+      <CoachingVisualShowcase />
+
       <CoachingFreeFeatures />
 
       {/* 4. PREMIUM COACHING FEATURES (2x4 GRID) */}

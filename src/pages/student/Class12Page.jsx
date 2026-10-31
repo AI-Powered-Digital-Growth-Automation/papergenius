@@ -9,6 +9,7 @@ import {
 import Class12FreeFeatures from '../../components/class12/Class12FreeFeatures';
 import Class12PremiumFeatures from '../../components/class12/Class12PremiumFeatures';
 import Class12FaqSection from '../../components/class12/Class12FaqSection';
+import Class12VisualShowcase from '../../components/class12/Class12VisualShowcase';
 
 export default function Class12Page() {
   const streamSubjects = [
@@ -118,6 +119,8 @@ export default function Class12Page() {
       </section>
 
       {/* 3. FREE PLAN FEATURES (2x2 GRID) */}
+      <Class12VisualShowcase />
+
       <Class12FreeFeatures />
 
       {/* 4. PREMIUM PLAN FEATURES (2x4 GRID) */}

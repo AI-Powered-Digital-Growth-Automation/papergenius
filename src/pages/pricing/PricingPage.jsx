@@ -8,6 +8,7 @@ import {
 import StudentPricingGrid from '../../components/pricing/StudentPricingGrid';
 import CoachingPricingGrid from '../../components/pricing/CoachingPricingGrid';
 import PricingPhilosophy from '../../components/pricing/PricingPhilosophy';
+import PricingVisualShowcase from '../../components/pricing/PricingVisualShowcase';
 import { PAYMENT_LINKS } from '../../config/paymentConfig';
 
 export default function PricingPage() {
@@ -114,6 +115,8 @@ export default function PricingPage() {
       </div>
 
       {/* FULL WIDTH IN-DEPTH PRICING PHILOSOPHY & SEO ANALYSIS */}
+      <PricingVisualShowcase activeTab={activeTab} />
+
       <PricingPhilosophy />
 
       {/* CHECKOUT MODAL: PHONEPE LINK + UPI QR */}

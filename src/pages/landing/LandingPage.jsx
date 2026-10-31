@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 
 import EcosystemStrip from '../../components/landing/EcosystemStrip';
+import HomeHeroVisualShowcase from '../../components/landing/HomeHeroVisualShowcase';
 import SubjectCatalog from '../../components/landing/SubjectCatalog';
 import CoachingDirectorProGrid from '../../components/landing/CoachingDirectorProGrid';
 import CbseInsights from '../../components/landing/CbseInsights';
@@ -105,6 +106,8 @@ export default function LandingPage() {
       </section>
 
       {/* 2. ECOSYSTEM QUICK-NAV STRIP */}
+      <HomeHeroVisualShowcase />
+
       <EcosystemStrip />
 
       {/* 3. DUAL UTILITY HUB */}

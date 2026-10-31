@@ -9,6 +9,7 @@ import {
 import Class10FreeFeatures from '../../components/class10/Class10FreeFeatures';
 import Class10PremiumFeatures from '../../components/class10/Class10PremiumFeatures';
 import Class10FaqSection from '../../components/class10/Class10FaqSection';
+import Class10VisualShowcase from '../../components/class10/Class10VisualShowcase';
 
 export default function Class10Page() {
   const coreSubjects = [
@@ -105,6 +106,8 @@ export default function Class10Page() {
       </section>
 
       {/* 3. FREE PLAN FEATURES (2x2 GRID) */}
+      <Class10VisualShowcase />
+
       <Class10FreeFeatures />
 
       {/* 4. PREMIUM PLAN FEATURES (2x4 GRID) */}
