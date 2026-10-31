@@ -1,4 +1,5 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
+import { supabase } from '../../services/supabaseClient';
 import { 
   ShieldAlert, Users, BookOpen, BarChart3, PlusCircle, 
   CheckCircle2, XCircle, Search, Edit3, Trash2, ArrowUpRight, 
@@ -23,102 +24,110 @@ export default function AdminDashboardPage() {
     tags: 'Class 10, CBSE 2026'
   });
 
-  // Live Subscription Tracking Data (Point 6)
-  const [usersList, setUsersList] = useState([
-    {
-      id: 'usr-101',
-      name: 'Gulzar Ahmed',
-      email: 'digitalgulzarservices@gmail.com',
-      role: 'teacher',
-      instituteName: 'Apex Science Academy & Coaching',
-      plan: 'Coaching Director Pro',
-      amount: '₹4,999/yr',
-      status: 'Active',
-      quotaLeft: 136,
-      quotaMax: 150,
-      joinedDate: '24 Oct 2026',
-      subscribedSubjects: ['All Class 10 & 12 Subjects']
-    },
-    {
-      id: 'usr-102',
-      name: 'Rahul Sharma',
-      email: 'rahul.board26@gmail.com',
-      role: 'student',
-      instituteName: '-',
-      plan: 'Class 10 Board Pass',
-      amount: '₹199/mo',
-      status: 'Active',
-      quotaLeft: 84,
-      quotaMax: 100,
-      joinedDate: '23 Oct 2026',
-      subscribedSubjects: ['Science', 'Mathematics Standard']
-    },
-    {
-      id: 'usr-103',
-      name: 'Priya Verma',
-      email: 'priya.verma12@outlook.com',
-      role: 'student',
-      instituteName: '-',
-      plan: 'Class 12 Board Pass',
-      amount: '₹499/mo',
-      status: 'Active',
-      quotaLeft: 142,
-      quotaMax: 150,
-      joinedDate: '22 Oct 2026',
-      subscribedSubjects: ['Physics', 'Chemistry']
-    },
-    {
-      id: 'usr-104',
-      name: 'Vikram Joshi (Tutor)',
-      email: 'vikram.tutions@gmail.com',
-      role: 'teacher',
-      instituteName: 'Bright Future Tutorials',
-      plan: 'Tuition Master',
-      amount: '₹799/mo',
-      status: 'Active',
-      quotaLeft: 9,
-      quotaMax: 12,
-      joinedDate: '20 Oct 2026',
-      subscribedSubjects: ['Class 10 All Subjects']
-    },
-    {
-      id: 'usr-105',
-      name: 'Aman Patel',
-      email: 'aman.patel@gmail.com',
-      role: 'student',
-      instituteName: '-',
-      plan: 'Starter Free',
-      amount: '₹0',
-      status: 'Pending Upgrade',
-      quotaLeft: 0,
-      quotaMax: 2,
-      joinedDate: '19 Oct 2026',
-      subscribedSubjects: ['Sample Check Only']
-    }
-  ]);
+    // Real-time Supabase Live User Tracking State (No Fake Users)
+  const [usersList, setUsersList] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(true);
 
-  // Actions on Users
-  const handleAddQuota = (id, amountToAdd) => {
-    setUsersList(prev => prev.map(u => {
-      if (u.id === id) {
-        return {
-          ...u,
-          quotaLeft: u.quotaLeft + amountToAdd,
-          quotaMax: u.quotaMax + amountToAdd,
-          status: 'Active'
-        };
+  const fetchRealUsers = async () => {
+    setLoadingUsers(true);
+    try {
+      const { data, error } = await supabase
+        .from('user_quotas')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.warn('Error fetching live users from Supabase:', error.message);
       }
-      return u;
-    }));
+
+      if (data && data.length > 0) {
+        const mapped = data.map(u => ({
+          id: u.id,
+          userId: u.user_id,
+          name: u.email?.split('@')[0] || 'User',
+          email: u.email,
+          role: u.role || 'student',
+          instituteName: u.role === 'teacher' ? 'Coaching Academy' : 'School Student',
+          plan: u.plan_name || (u.is_premium ? 'Premium Board Pass' : 'Starter Free'),
+          amount: u.is_premium ? (u.role === 'teacher' ? '₹4,999' : '₹199') : '₹0',
+          status: u.is_premium ? 'Active' : 'Free Tier',
+          quotaLeft: u.quota_remaining ?? 2,
+          quotaMax: u.quota_max ?? 2,
+          joinedDate: new Date(u.created_at || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+          subscribedSubjects: u.subscribed_subjects && u.subscribed_subjects.length > 0 ? u.subscribed_subjects : ['General Syllabus']
+        }));
+        setUsersList(mapped);
+      } else {
+        setUsersList([]);
+      }
+    } catch (err) {
+      console.warn('Failed to load real users:', err);
+    } finally {
+      setLoadingUsers(false);
+    }
   };
 
-  const handleToggleStatus = (id) => {
+  useEffect(() => {
+    fetchRealUsers();
+  }, []);
+
+  // Real Database Update: Add Quota (+25)
+  const handleAddQuota = async (id, amountToAdd) => {
+    const targetUser = usersList.find(u => u.id === id);
+    if (!targetUser) return;
+
+    const newLeft = targetUser.quotaLeft + amountToAdd;
+    const newMax = targetUser.quotaMax + amountToAdd;
+
+    // Optimistic UI update
     setUsersList(prev => prev.map(u => {
       if (u.id === id) {
-        return { ...u, status: u.status === 'Active' ? 'Suspended' : 'Active' };
+        return { ...u, quotaLeft: newLeft, quotaMax: newMax, status: 'Active' };
       }
       return u;
     }));
+
+    // Persist to Supabase Database
+    try {
+      await supabase
+        .from('user_quotas')
+        .update({
+          quota_remaining: newLeft,
+          quota_max: newMax,
+          is_premium: true,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id);
+    } catch (e) {
+      console.error('Failed to persist quota update in Supabase:', e);
+    }
+  };
+
+  // Real Database Update: Toggle Plan Status
+  const handleToggleStatus = async (id) => {
+    const targetUser = usersList.find(u => u.id === id);
+    if (!targetUser) return;
+
+    const nextIsPremium = targetUser.status !== 'Active';
+
+    setUsersList(prev => prev.map(u => {
+      if (u.id === id) {
+        return { ...u, status: nextIsPremium ? 'Active' : 'Free Tier' };
+      }
+      return u;
+    }));
+
+    try {
+      await supabase
+        .from('user_quotas')
+        .update({
+          is_premium: nextIsPremium,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id);
+    } catch (e) {
+      console.error('Failed to persist status toggle in Supabase:', e);
+    }
   };
 
   // Blog CMS Add
