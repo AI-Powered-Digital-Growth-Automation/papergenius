@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
     return sid;
   });
 
-  // Coaching Subscription Profile - Default is Strictly Free Starter Trial (2 Papers)
+  // Coaching Subscription Profile (Synced with DB)
   const [coachingSubscription, setCoachingSubscription] = useState({
     instituteName: 'Coaching / Tuition Institute',
     directorName: 'Teacher',
@@ -27,12 +27,12 @@ export const AuthProvider = ({ children }) => {
     isPremium: false,
     papersGeneratedThisMonth: 0,
     papersQuota: 2, // 2 lifetime free test papers
-    canUseWatermark: false, // Locked until Tuition Master or Director Pro
-    canUseMultiSets: false, // Locked until Director Pro
+    canUseWatermark: false,
+    canUseMultiSets: false,
     canGenerateOMR: true
   });
 
-  // Student Freemium vs Premium State - Default is completely Unsubscribed
+  // Student Freemium vs Premium State (Synced with DB)
   const [studentSubscription, setStudentSubscription] = useState({
     plan: 'Free Trial Student',
     isPremium: false,
@@ -44,35 +44,96 @@ export const AuthProvider = ({ children }) => {
     hasAccessToMocks: false
   });
 
+  // Fetch or Initialize Real User Quotas from Supabase Postgres Table
+  const fetchAndSyncUserQuotas = async (currentUser, userRole) => {
+    if (!currentUser) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('user_quotas')
+        .select('*')
+        .eq('user_id', currentUser.id)
+        .maybeSingle();
+
+      if (error && error.code !== 'PGRST116') {
+        console.warn('Error reading user_quotas from Supabase:', error.message);
+      }
+
+      if (data) {
+        // Sync Student Profile from DB
+        if (userRole === 'student') {
+          setStudentSubscription(prev => ({
+            ...prev,
+            plan: data.plan_name || 'Free Trial Student',
+            isPremium: Boolean(data.is_premium),
+            grade: currentUser.user_metadata?.grade || 'Class 10',
+            subscribedSubjects: data.subscribed_subjects || [],
+            evaluationsRemaining: typeof data.quota_remaining === 'number' ? data.quota_remaining : 2,
+            maxEvaluations: typeof data.quota_max === 'number' ? data.quota_max : 2,
+            hasAccessToFormulas: Boolean(data.is_premium),
+            hasAccessToMocks: Boolean(data.is_premium)
+          }));
+        } else {
+          // Sync Coaching Profile from DB
+          setCoachingSubscription(prev => ({
+            ...prev,
+            instituteName: currentUser.user_metadata?.institute_name || prev.instituteName,
+            directorName: currentUser.user_metadata?.full_name || prev.directorName,
+            directorEmail: currentUser.email,
+            plan: data.plan_name || 'Starter Trial',
+            isPremium: Boolean(data.is_premium),
+            papersQuota: typeof data.quota_max === 'number' ? data.quota_max : 2,
+            papersGeneratedThisMonth: Math.max(0, (data.quota_max || 2) - (data.quota_remaining || 2)),
+            canUseWatermark: Boolean(data.is_premium),
+            canUseMultiSets: Boolean(data.is_premium) && data.plan_name?.includes('Director'),
+            canGenerateOMR: true
+          }));
+        }
+      } else {
+        // Initialize Default Record in Supabase DB for new user
+        const defaultRecord = {
+          user_id: currentUser.id,
+          email: currentUser.email,
+          role: userRole,
+          plan_name: userRole === 'teacher' ? 'Starter Trial' : 'Free Trial Student',
+          is_premium: false,
+          quota_remaining: 2,
+          quota_max: 2,
+          subscribed_subjects: []
+        };
+
+        const { error: insertErr } = await supabase
+          .from('user_quotas')
+          .insert([defaultRecord]);
+
+        if (insertErr) {
+          console.warn('Auto-init quota record note:', insertErr.message);
+        }
+      }
+    } catch (err) {
+      console.warn('Quota sync exception:', err);
+    }
+  };
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        const userRole = session.user.user_metadata?.role || 'student';
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        const userRole = currentUser.user_metadata?.role || 'student';
         setRole(userRole);
-
-        const isUserPremium = session.user.user_metadata?.is_premium || false;
-        if (isUserPremium) {
-          setStudentSubscription({
-            plan: 'Class 10 Board Pass',
-            isPremium: true,
-            grade: 'Class 10',
-            subscribedSubjects: ['Science', 'Mathematics Standard'],
-            evaluationsRemaining: 98,
-            maxEvaluations: 100,
-            hasAccessToFormulas: true,
-            hasAccessToMocks: true
-          });
-        }
+        fetchAndSyncUserQuotas(currentUser, userRole);
       }
       setLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        const userRole = session.user.user_metadata?.role || 'student';
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        const userRole = currentUser.user_metadata?.role || 'student';
         setRole(userRole);
+        fetchAndSyncUserQuotas(currentUser, userRole);
       }
       setLoading(false);
     });
@@ -88,7 +149,7 @@ export const AuthProvider = ({ children }) => {
 
   const hasSubjectAccess = (subject) => {
     if (!studentSubscription || !studentSubscription.subscribedSubjects) return false;
-    
+
     const normalize = (name) => {
       const lower = name.toLowerCase().trim();
       if (lower === 'social science' || lower === 'sst') return 'social_science';
@@ -110,31 +171,76 @@ export const AuthProvider = ({ children }) => {
     return studentSubscription.subscribedSubjects.some(sub => normalize(sub) === targetKey);
   };
 
-  const consumeEvaluationQuota = () => {
+  // Consume Evaluation Quota (Persistent in Supabase Database)
+  const consumeEvaluationQuota = async () => {
+    const nextVal = Math.max(0, studentSubscription.evaluationsRemaining - 1);
     setStudentSubscription(prev => ({
       ...prev,
-      evaluationsRemaining: Math.max(0, prev.evaluationsRemaining - 1)
+      evaluationsRemaining: nextVal
     }));
+
+    if (user) {
+      try {
+        await supabase
+          .from('user_quotas')
+          .update({ quota_remaining: nextVal, updated_at: new Date().toISOString() })
+          .eq('user_id', user.id);
+      } catch (err) {
+        console.warn('Failed to persist evaluation decrement:', err);
+      }
+    }
   };
 
-  const consumePaperQuota = () => {
+  // Consume Paper Quota (Persistent in Supabase Database)
+  const consumePaperQuota = async () => {
     setCoachingSubscription(prev => ({
       ...prev,
       papersGeneratedThisMonth: prev.papersGeneratedThisMonth + 1
     }));
+
+    if (user) {
+      try {
+        const currentRemaining = Math.max(0, coachingSubscription.papersQuota - (coachingSubscription.papersGeneratedThisMonth + 1));
+        await supabase
+          .from('user_quotas')
+          .update({ quota_remaining: currentRemaining, updated_at: new Date().toISOString() })
+          .eq('user_id', user.id);
+      } catch (err) {
+        console.warn('Failed to persist paper decrement:', err);
+      }
+    }
   };
 
-  const upgradeToPremium = (planName = 'Class 10 Board Pass', subjects = ['Science', 'Mathematics Standard']) => {
+  const upgradeToPremium = async (planName = 'Class 10 Board Pass', subjects = ['Science', 'Mathematics Standard']) => {
+    const maxQ = planName.includes('12') ? 150 : 100;
     setStudentSubscription({
       plan: planName,
       isPremium: true,
       grade: planName.includes('12') ? 'Class 12' : 'Class 10',
       subscribedSubjects: subjects,
-      evaluationsRemaining: planName.includes('12') ? 150 : 100,
-      maxEvaluations: planName.includes('12') ? 150 : 100,
+      evaluationsRemaining: maxQ,
+      maxEvaluations: maxQ,
       hasAccessToFormulas: true,
       hasAccessToMocks: true
     });
+
+    if (user) {
+      try {
+        await supabase
+          .from('user_quotas')
+          .update({
+            plan_name: planName,
+            is_premium: true,
+            quota_max: maxQ,
+            quota_remaining: maxQ,
+            subscribed_subjects: subjects,
+            updated_at: new Date().toISOString()
+          })
+          .eq('user_id', user.id);
+      } catch (err) {
+        console.warn('Failed to persist upgrade:', err);
+      }
+    }
   };
 
   return (
@@ -160,4 +266,3 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
-

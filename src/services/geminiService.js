@@ -1,222 +1,217 @@
 ﻿import { GoogleGenAI } from '@google/genai';
 
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-
-if (!apiKey) {
-  console.warn('VITE_GEMINI_API_KEY is not defined in environment variables.');
-}
-
-const ai = new GoogleGenAI({ apiKey: apiKey || '' });
-
-// Google official supported model
+const clientApiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
 const PRIMARY_MODEL = 'gemini-3.8-flash';
 
-/**
- * Robust execution with auto-retry on 503 (High Demand Spikes)
- */
-async function callGeminiWithRetry(params, maxRetries = 3) {
-  let attempt = 0;
-  while (attempt < maxRetries) {
-    try {
-      const response = await ai.models.generateContent({
-        model: PRIMARY_MODEL,
-        ...params
-      });
-      if (response && response.text) {
-        return response.text;
-      }
-      throw new Error('Empty response received from Gemini AI.');
-    } catch (err) {
-      attempt++;
-      console.warn(`Gemini API attempt ${attempt} failed:`, err?.message || err);
-      
-      const isRetryable = err?.message?.includes('503') || 
-                          err?.message?.includes('high demand') ||
-                          err?.message?.includes('UNAVAILABLE') ||
-                          err?.message?.includes('429');
-
-      if (isRetryable && attempt < maxRetries) {
-        // Wait 1.5 seconds and retry
-        await new Promise(resolve => setTimeout(resolve, 1500 * attempt));
-        continue;
-      }
-      throw err;
-    }
+// Fallback direct instance for local offline dev
+let localAi = null;
+if (clientApiKey) {
+  try {
+    localAi = new GoogleGenAI({ apiKey: clientApiKey });
+  } catch (e) {
+    console.warn('Local Gemini direct init skipped:', e);
   }
 }
 
 /**
- * High-Speed CBSE Board Standard Question Paper Generator
+ * Universal Secure Caller:
+ * 1. Tries Netlify Serverless Backend Function (API Key 100% hidden on server).
+ * 2. Falls back to direct call only in local dev if serverless endpoint is unreachable.
+ */
+async function callGeminiSecure(params, maxRetries = 2) {
+  let attempt = 0;
+
+  while (attempt <= maxRetries) {
+    try {
+      // 1. Try secure serverless backend endpoint
+      const res = await fetch('/.netlify/functions/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'generateContent', params })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.text) {
+          return data.text;
+        }
+      }
+    } catch (netErr) {
+      // Serverless not available (e.g. running vite dev locally without netlify cli)
+    }
+
+    // 2. Local Dev Direct Fallback (if serverless is not running locally)
+    if (localAi) {
+      try {
+        const response = await localAi.models.generateContent({
+          model: PRIMARY_MODEL,
+          ...params
+        });
+        if (response && response.text) {
+          return response.text;
+        }
+      } catch (err) {
+        console.warn(`Local direct Gemini attempt ${attempt + 1} failed:`, err?.message || err);
+      }
+    }
+
+    attempt++;
+    if (attempt <= maxRetries) {
+      await new Promise(r => setTimeout(r, 1200 * attempt));
+    }
+  }
+
+  throw new Error('AI Engine is currently busy or experiencing high demand. Please retry in a few seconds.');
+}
+
+/**
+ * 1. Generate Question Paper (Text Mode)
  */
 export async function generateQuestionPaper({
   grade = 'Class 10',
   subject = 'Science',
-  chapter = 'All Chapters',
-  maxMarks = 40,
-  duration = '90 Minutes',
-  difficulty = 'Standard Board Level',
-  coachingName = 'Bright Future Classes'
+  chapter = 'All Chapters (Full Syllabus)',
+  marks = 40,
+  difficulty = 'Standard Board (60% Direct, 40% Competency)',
+  questionType = 'Comprehensive Balanced',
+  specialInstructions = ''
 }) {
-  const prompt = `Act as Senior CBSE Paper Setter. Generate strictly valid JSON for a CBSE exam paper:
-Grade: ${grade} | Subject: ${subject} | Topic: ${chapter} | Marks: ${maxMarks} | Time: ${duration} | Difficulty: ${difficulty} | Institute: ${coachingName}
+  const prompt = `You are a Senior CBSE Chief Question Paper Setter with 25 years of experience.
+Generate a strictly curriculum-compliant question paper adhering to the latest CBSE 2025-2026 examination blueprint and National Education Policy (NEP 2020) competency guidelines.
 
-Output pure JSON only (no markdown, no backticks):
+SPECIFICATIONS:
+- Class/Grade: ${grade}
+- Subject: ${subject}
+- Chapter/Topic: ${chapter}
+- Total Marks: ${marks} Marks
+- Difficulty Mix: ${difficulty}
+- Target Standard: Exactly mirror official CBSE Board examination structure
+- Special Instructions: ${specialInstructions || 'Strict adherence to NEP 50% competency guidelines'}
+
+FORMAT REQUIREMENT:
+Respond ONLY with a valid, clean JSON object matching this exact structure:
 {
-  "examDetails": {
-    "instituteName": "${coachingName}",
-    "title": "${grade} Board Assessment - ${subject}",
-    "subject": "${subject}",
-    "grade": "${grade}",
-    "chapter": "${chapter}",
-    "maxMarks": ${maxMarks},
-    "duration": "${duration}",
-    "generalInstructions": [
-      "All questions are compulsory.",
-      "Internal choices are provided as per latest CBSE pattern.",
-      "Calculators are not permitted."
-    ]
-  },
+  "title": "Title of the Examination",
+  "grade": "${grade}",
+  "subject": "${subject}",
+  "marks": ${marks},
+  "duration": "${marks <= 20 ? '45 Minutes' : marks <= 40 ? '1.5 Hours' : '3 Hours'}",
+  "instructions": [
+    "General instruction 1",
+    "General instruction 2"
+  ],
   "sections": [
     {
-      "sectionName": "SECTION A (Objective / MCQs)",
-      "type": "MCQ",
+      "name": "Section A",
+      "marks": "Total marks for section",
+      "type": "Multiple Choice Questions",
       "questions": [
         {
           "qNumber": 1,
-          "questionText": "Authentic crisp CBSE question text",
-          "options": ["A) ...", "B) ...", "C) ...", "D) ..."],
           "marks": 1,
-          "correctAnswer": "A) ...",
-          "markingScheme": "1 mark for correct option"
-        }
-      ]
-    },
-    {
-      "sectionName": "SECTION B (Subjective & Numerical)",
-      "type": "Short/Long",
-      "questions": [
-        {
-          "qNumber": 2,
-          "questionText": "Subjective question statement",
-          "options": [],
-          "marks": 2,
-          "correctAnswer": "Direct solution key",
-          "markingScheme": "Step marking points"
+          "questionText": "Question text...",
+          "options": ["A) option 1", "B) option 2", "C) option 3", "D) option 4"],
+          "answerKey": "A) option 1"
         }
       ]
     }
   ]
 }
-Sum of question marks must equal ${maxMarks}. Authentic CBSE questions only.`;
+Return raw JSON only without markdown code blocks.`;
+
+  const rawText = await callGeminiSecure({
+    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+    generationConfig: {
+      temperature: 0.3,
+      responseMimeType: 'application/json'
+    }
+  });
 
   try {
-    const rawOutput = await callGeminiWithRetry({
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        temperature: 0.2
-      }
-    });
-
-    let cleanText = rawOutput.trim();
-    if (cleanText.startsWith('```')) {
-      cleanText = cleanText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
-    }
-    return JSON.parse(cleanText);
-  } catch (error) {
-    console.error('Gemini Paper Generation Error:', error);
-    throw new Error(error.message || 'Failed to generate question paper. Please try again.');
+    const cleaned = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+    return JSON.parse(cleaned);
+  } catch (parseErr) {
+    console.error('Failed to parse question paper JSON:', rawText);
+    throw new Error('AI returned an unexpected format. Please retry paper generation.');
   }
 }
 
 /**
- * Multimodal CBSE Student Answer Sheet Evaluator
+ * 2. Evaluate Answer Sheet (Multimodal Vision Mode)
  */
 export async function evaluateAnswerSheet({
   imageBase64,
   mimeType = 'image/jpeg',
   grade = 'Class 10',
   subject = 'Science',
-  questionText = '',
+  questionContext = '',
   maxMarks = 5
 }) {
-  const cleanBase64 = imageBase64.replace(/^data:image\/[a-zA-Z+]+;base64,/, '');
+  const prompt = `You are an official CBSE Head Examiner evaluating a student's handwritten answer sheet.
+Evaluate the handwriting against official CBSE step-marking rubrics.
 
-  const prompt = `Act as an official Senior CBSE Board Examiner evaluating a student's handwritten answer sheet.
-Strictly adhere to official CBSE step-wise marking guidelines.
+CRITERIA:
+1. Transcribe the student's handwritten answer accurately.
+2. Break down the marks step-by-step:
+   - Stating governing formula/principle (0.5 to 1M)
+   - Intermediate algebraic substitution (1 to 2M)
+   - Final magnitude with proper SI unit (0.5 to 1M)
+3. Check 100/100 Topper Presentation Benchmarks:
+   - Is the final formula/answer enclosed in a box?
+   - Is there a right-side rough work margin?
+   - Are SI units correctly stated and underlined?
+4. Pinpoint exact deductions and provide the official model topper answer.
 
-Evaluation Metadata:
-- Grade: ${grade}
-- Subject: ${subject}
-- Question: ${questionText ? questionText : 'Read question directly from the student answer sheet'}
-- Maximum Marks: ${maxMarks}
-
-Analyze the handwritten answer image closely. Output STRICTLY valid JSON with no markdown formatting and no backticks:
+Respond ONLY with a valid JSON object matching this structure:
 {
-  "studentTranscription": "Complete transcription of the handwritten answer written by the student",
-  "totalMarksAwarded": 4,
+  "transcribedText": "Student text read from image",
+  "marksAwarded": 4.5,
   "maxMarks": ${maxMarks},
-  "overallVerdict": "Good attempt / Needs improvement in formula / Minor calculation mistake",
+  "percentage": 90,
+  "presentationRating": "Excellent / Needs Improvement",
   "stepBreakdown": [
+    { "step": "Formula declaration", "marks": "1/1", "status": "Awarded" }
+  ],
+  "deductions": [
+    "Exact reason if any mark was deducted"
+  ],
+  "topperSecretsCheck": {
+    "formulaBoxed": true,
+    "roughMarginPresent": false,
+    "siUnitUnderlined": true
+  },
+  "modelAnswer": "Official CBSE topper solution",
+  "feedback": "Actionable encouragement for the student"
+}
+Return raw JSON only without code blocks.`;
+
+  const parts = [
+    { text: prompt },
     {
-      "stepTitle": "Given data & Formula identification",
-      "marksAwarded": 1,
-      "maxMarksForStep": 1,
-      "feedback": "Correct formula stated clearly."
-    },
-    {
-      "stepTitle": "Step-by-step Calculation / Derivation",
-      "marksAwarded": 1.5,
-      "maxMarksForStep": 2,
-      "feedback": "Missed intermediate substitution step on line 3."
-    },
-    {
-      "stepTitle": "Final Answer & Proper Units",
-      "marksAwarded": 0.5,
-      "maxMarksForStep": 1,
-      "feedback": "Correct magnitude but missing SI unit."
+      inlineData: {
+        data: imageBase64,
+        mimeType: mimeType
+      }
     }
-  ],
-  "strengths": [
-    "Clean handwriting and clear headings.",
-    "Correct initial formula applied."
-  ],
-  "deductionsAndMistakes": [
-    "0.5 marks deducted: SI unit was omitted in final answer."
-  ],
-  "cbseModelAnswer": "The ideal 100/100 CBSE presentation answer for this exact question to get full marks.",
-  "examinerProTip": "Examiner's secret tip on how to present this answer to guarantee 100% step marks in CBSE board exam."
-}`;
+  ];
+
+  if (questionContext) {
+    parts.unshift({ text: `Question Reference Context: ${questionContext}` });
+  }
+
+  const rawText = await callGeminiSecure({
+    contents: [{ role: 'user', parts: parts }],
+    generationConfig: {
+      temperature: 0.2,
+      responseMimeType: 'application/json'
+    }
+  });
 
   try {
-    const rawOutput = await callGeminiWithRetry({
-      contents: [
-        {
-          role: 'user',
-          parts: [
-            { text: prompt },
-            {
-              inlineData: {
-                data: cleanBase64,
-                mimeType: mimeType
-              }
-            }
-          ]
-        }
-      ],
-      config: {
-        responseMimeType: 'application/json',
-        temperature: 0.2
-      }
-    });
-
-    let cleanText = rawOutput.trim();
-    if (cleanText.startsWith('```')) {
-      cleanText = cleanText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
-    }
-    return JSON.parse(cleanText);
-  } catch (error) {
-    console.error('Gemini Answer Sheet Evaluation Error:', error);
-    throw new Error(error.message || 'Failed to evaluate answer sheet. Please ensure the image is clear.');
+    const cleaned = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+    return JSON.parse(cleaned);
+  } catch (parseErr) {
+    console.error('Failed to parse evaluation JSON:', rawText);
+    throw new Error('AI evaluation response parsing failed. Please retry.');
   }
 }

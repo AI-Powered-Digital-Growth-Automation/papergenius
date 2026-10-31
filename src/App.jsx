@@ -47,7 +47,14 @@ export default function App() {
               <Route path="/pyq-vault" element={<PyqVaultPage />} />
               <Route path="/blog" element={<BlogListPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
-              <Route path="/admin" element={<AdminDashboardPage />} />
+                            <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/auth" element={<AuthPage />} />
 
               {/* Protected Teacher OS Routes */}

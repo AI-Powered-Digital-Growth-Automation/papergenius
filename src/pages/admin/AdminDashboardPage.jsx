@@ -7,68 +7,6 @@ import {
 import { initialBlogPosts } from '../../data/blogData';
 
 export default function AdminDashboardPage() {
-  const [isAdminUnlocked, setIsAdminUnlocked] = useState(() => {
-    return sessionStorage.getItem('pg_admin_auth') === 'granted';
-  });
-  const [adminPasscode, setAdminPasscode] = useState('');
-  const [passcodeError, setPasscodeError] = useState(false);
-
-  const handleAdminLogin = (e) => {
-    e.preventDefault();
-    // Verify Master Key
-    if (adminPasscode === 'DG@PaperGenius2026' || adminPasscode === 'Gulzar@2026') {
-      sessionStorage.setItem('pg_admin_auth', 'granted');
-      setIsAdminUnlocked(true);
-      setPasscodeError(false);
-    } else {
-      setPasscodeError(true);
-    }
-  };
-
-  const handleAdminLogout = () => {
-    sessionStorage.removeItem('pg_admin_auth');
-    setIsAdminUnlocked(false);
-  };
-
-  if (!isAdminUnlocked) {
-    return (
-      <div className="min-h-screen bg-[#050814] flex items-center justify-center p-4">
-        <div className="w-full max-w-md p-8 rounded-3xl bg-[#080D24] border border-[#7C3CFF]/40 shadow-2xl text-center space-y-6">
-          <div className="w-14 h-14 rounded-2xl bg-[#7C3CFF]/20 text-[#8C78FF] flex items-center justify-center mx-auto shadow-inner">
-            <ShieldAlert className="w-7 h-7 text-[#5EE7FF]" />
-          </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-black text-white">Founder Admin Gate</h1>
-            <p className="text-xs text-slate-400 mt-1">PaperGenius Master Authentication Clearance</p>
-          </div>
-
-          <form onSubmit={handleAdminLogin} className="space-y-4">
-            <input
-              type="password"
-              required
-              placeholder="Enter Master Passcode"
-              value={adminPasscode}
-              onChange={(e) => { setAdminPasscode(e.target.value); setPasscodeError(false); }}
-              className="w-full px-4 py-3 rounded-xl bg-[#0F172A] border border-white/15 text-white text-sm font-mono text-center tracking-widest focus:outline-none focus:border-[#7C3CFF]"
-            />
-            {passcodeError && (
-              <p className="text-xs text-rose-400 font-bold">Invalid Passcode! Access Denied.</p>
-            )}
-            <button
-              type="submit"
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-[#7C3CFF] to-[#06B6D4] text-white text-sm font-bold shadow-lg hover:opacity-95 transition-all"
-            >
-              Verify Master Authorization
-            </button>
-          </form>
-
-          <p className="text-[11px] text-slate-500 font-mono">
-            IP and hardware session logged for security compliance.
-          </p>
-        </div>
-      </div>
-    );
-  }
   const [activeTab, setActiveTab] = useState('subscriptions'); // 'subscriptions' | 'blog-cms' | 'analytics'
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRoleFilter, setSelectedRoleFilter] = useState('All');
