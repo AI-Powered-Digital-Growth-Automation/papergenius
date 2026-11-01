@@ -86,6 +86,77 @@ const SAMPLE_PAPER = {
   ]
 };
 
+// Deterministic Anti-Cheating Set Shuffling Algorithm
+function getShuffledPaper(basePaper, setCode) {
+  if (!basePaper || !basePaper.sections || setCode === 'Set A') {
+    return basePaper;
+  }
+
+  // Clone deeply to prevent mutating original Set A
+  const cloned = JSON.parse(JSON.stringify(basePaper));
+
+  let globalQuestionCounter = 1;
+
+  cloned.sections = cloned.sections.map((section, sIdx) => {
+    let qList = [...(section.questions || [])];
+    const len = qList.length;
+
+    if (len > 1) {
+      if (setCode === 'Set B') {
+        // Shift questions: Move first half to end with interleave
+        const mid = Math.floor(len / 2);
+        const firstHalf = qList.slice(0, mid);
+        const secondHalf = qList.slice(mid);
+        qList = [...secondHalf, ...firstHalf];
+      } else if (setCode === 'Set C') {
+        // Reverse questions order for Set C
+        qList = qList.reverse();
+      }
+    }
+
+    // Shuffle MCQ Options deterministically based on Set
+    qList = qList.map((q) => {
+      let opts = q.options ? [...q.options] : [];
+      if (opts.length >= 4) {
+        if (setCode === 'Set B') {
+          // Rotate options: [A, B, C, D] -> [C, D, A, B]
+          const optTexts = opts.map(o => o.replace(/^[A-D]\)\s*/i, ''));
+          opts = [
+            `A) ${optTexts[2] || optTexts[0]}`,
+            `B) ${optTexts[3] || optTexts[1]}`,
+            `C) ${optTexts[0] || optTexts[2]}`,
+            `D) ${optTexts[1] || optTexts[3]}`
+          ];
+        } else if (setCode === 'Set C') {
+          // Rotate options: [A, B, C, D] -> [B, D, A, C]
+          const optTexts = opts.map(o => o.replace(/^[A-D]\)\s*/i, ''));
+          opts = [
+            `A) ${optTexts[1] || optTexts[0]}`,
+            `B) ${optTexts[3] || optTexts[1]}`,
+            `C) ${optTexts[0] || optTexts[2]}`,
+            `D) ${optTexts[2] || optTexts[3]}`
+          ];
+        }
+      }
+
+      const reindexedQ = {
+        ...q,
+        qNumber: globalQuestionCounter++,
+        options: opts
+      };
+
+      return reindexedQ;
+    });
+
+    return {
+      ...section,
+      questions: qList
+    };
+  });
+
+  return cloned;
+}
+
 export default function CreatePaperPage() {
   const { user } = useAuth();
 
@@ -112,6 +183,11 @@ export default function CreatePaperPage() {
   const [paperData, setPaperData] = useState(null);
   const [error, setError] = useState('');
   const [activeSet, setActiveSet] = useState('Set A');
+
+  // Dynamically compute real shuffled paper based on Set A, B, or C
+  const currentSetPaperData = useMemo(() => {
+    return getShuffledPaper(paperData, activeSet);
+  }, [paperData, activeSet]);
   const [copied, setCopied] = useState(false);
 
   const subjectsByGrade = {
@@ -164,7 +240,7 @@ export default function CreatePaperPage() {
   const handleCopyText = () => {
     if (!paperData) return;
     let text = `${formData.coachingName}\n${formData.subHeader}\n${paperData.examDetails.title} (${activeSet})\nMax Marks: ${paperData.examDetails.maxMarks} | Time: ${paperData.examDetails.duration}\n\n`;
-    paperData.sections.forEach(sec => {
+    (currentSetPaperData || paperData).sections.forEach(sec => {
       text += `\n--- ${sec.sectionName} ---\n`;
       sec.questions.forEach(q => {
         text += `\nQ${q.qNumber}. ${q.questionText} [${q.marks} Mark]\n`;
@@ -684,7 +760,7 @@ export default function CreatePaperPage() {
         <div className="lg:col-span-7">
           {paperData ? (
             <PaperCanvas
-              paperData={paperData}
+              paperData={currentSetPaperData}
               formData={formData}
               activeSet={activeSet}
               copied={copied}
