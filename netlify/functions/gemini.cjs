@@ -1,7 +1,8 @@
 ﻿const { GoogleGenAI } = require('@google/genai');
 
 // Server-side private key (Never exposed to browser network tab)
-const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
+const apiKey = process.env.GEMINI_API_KEY;
+
 
 exports.handler = async function (event, context) {
   // Only allow POST requests

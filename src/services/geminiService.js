@@ -1,29 +1,14 @@
-﻿import { GoogleGenAI } from '@google/genai';
-
-const clientApiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
-const PRIMARY_MODEL = 'gemini-3.8-flash';
-
-// Fallback direct instance for local offline dev
-let localAi = null;
-if (clientApiKey) {
-  try {
-    localAi = new GoogleGenAI({ apiKey: clientApiKey });
-  } catch (e) {
-    console.warn('Local Gemini direct init skipped:', e);
-  }
-}
-
-/**
- * Universal Secure Caller:
- * 1. Tries Netlify Serverless Backend Function (API Key 100% hidden on server).
- * 2. Falls back to direct call only in local dev if serverless endpoint is unreachable.
+﻿/**
+ * Calls the Netlify serverless backend.
+ * The Gemini API key remains server-side only.
  */
+
 async function callGeminiSecure(params, maxRetries = 2) {
   let attempt = 0;
 
   while (attempt <= maxRetries) {
     try {
-      // 1. Try secure serverless backend endpoint
+   // Secure serverless backend endpoint
       const res = await fetch('/.netlify/functions/gemini', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -39,22 +24,6 @@ async function callGeminiSecure(params, maxRetries = 2) {
     } catch (netErr) {
       // Serverless not available (e.g. running vite dev locally without netlify cli)
     }
-
-    // 2. Local Dev Direct Fallback (if serverless is not running locally)
-    if (localAi) {
-      try {
-        const response = await localAi.models.generateContent({
-          model: PRIMARY_MODEL,
-          ...params
-        });
-        if (response && response.text) {
-          return response.text;
-        }
-      } catch (err) {
-        console.warn(`Local direct Gemini attempt ${attempt + 1} failed:`, err?.message || err);
-      }
-    }
-
     attempt++;
     if (attempt <= maxRetries) {
       await new Promise(r => setTimeout(r, 1200 * attempt));
