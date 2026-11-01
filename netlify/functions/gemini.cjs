@@ -25,7 +25,7 @@ exports.handler = async function (event, context) {
     const { action, params } = body;
 
     const ai = new GoogleGenAI({ apiKey: apiKey });
-    const PRIMARY_MODEL = 'gemini-3.8-flash';
+    const PRIMARY_MODEL = 'gemini-2.5-flash';
 
     if (action === 'generateContent') {
       const response = await ai.models.generateContent({
