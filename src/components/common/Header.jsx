@@ -32,17 +32,17 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
 
         {/* Brand Logo */}
-        <Link to="/" className="flex items-center gap-3 group shrink-0">
+        <Link to="/" className="flex items-center gap-3.5 group shrink-0">
           <img
             src="/logo.png"
             alt="PaperGenius Logo"
-            className="w-10 h-10 object-contain rounded-xl shadow-lg shadow-[#7C3CFF]/30 group-hover:scale-105 transition-transform"
+            className="w-12 h-12 sm:w-14 sm:h-14 object-contain rounded-2xl shadow-xl shadow-[#7C3CFF]/40 group-hover:scale-105 transition-transform shrink-0"
           />
           <div className="flex flex-col justify-center">
-            <span className="text-xl sm:text-2xl font-black tracking-tight text-white leading-none">
+            <span className="text-2xl sm:text-3xl font-black tracking-tight text-white leading-none">
               Paper<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5EE7FF] to-[#8C78FF]">Genius</span>
             </span>
-            <span className="block text-[10px] font-mono text-[#06B6D4] tracking-widest uppercase font-bold mt-1 leading-none">
+            <span className="block text-[11px] sm:text-xs font-mono text-[#06B6D4] tracking-widest uppercase font-bold mt-1.5 leading-none">
               CBSE Exam OS
             </span>
           </div>
