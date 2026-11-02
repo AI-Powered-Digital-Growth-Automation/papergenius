@@ -22,15 +22,30 @@ exports.handler = async function (event, context) {
 
   try {
     const body = JSON.parse(event.body || '{}');
-    const { action, params } = body;
+    const { action, params, model } = body;
 
     const ai = new GoogleGenAI({ apiKey: apiKey });
-        // Use official active model for @google/genai SDK
-    const PRIMARY_MODEL = 'gemini-2.0-flash';
+
+    // Diagnostic action: ask Google directly what models are available
+    if (action === 'listModels') {
+      const response = await ai.models.list();
+      const modelNames = [];
+      for await (const m of response) {
+        modelNames.push(m.name);
+      }
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ models: modelNames })
+      };
+    }
+
+    // Default or user-requested model
+    const targetModel = model || 'gemini-2.0-flash';
 
     if (action === 'generateContent') {
       const response = await ai.models.generateContent({
-        model: PRIMARY_MODEL,
+        model: targetModel,
         ...params
       });
 
