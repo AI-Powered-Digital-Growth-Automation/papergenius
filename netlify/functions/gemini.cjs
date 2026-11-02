@@ -26,22 +26,8 @@ exports.handler = async function (event, context) {
 
     const ai = new GoogleGenAI({ apiKey: apiKey });
 
-    // Diagnostic action: ask Google directly what models are available
-    if (action === 'listModels') {
-      const response = await ai.models.list();
-      const modelNames = [];
-      for await (const m of response) {
-        modelNames.push(m.name);
-      }
-      return {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ models: modelNames })
-      };
-    }
-
-    // Default or user-requested model
-    const targetModel = model || 'gemini-2.0-flash';
+    // Official active fast production model
+    const targetModel = model || 'gemini-3.5-flash-lite';
 
     if (action === 'generateContent') {
       const response = await ai.models.generateContent({
