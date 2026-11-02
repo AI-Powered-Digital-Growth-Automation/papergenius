@@ -1,14 +1,13 @@
 ﻿const { GoogleGenAI } = require('@google/genai');
 
-// Server-side private key (Never exposed to browser network tab)
 const apiKey = process.env.GEMINI_API_KEY;
-
 
 exports.handler = async function (event, context) {
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: 'Method Not Allowed' })
     };
   }
@@ -16,7 +15,8 @@ exports.handler = async function (event, context) {
   if (!apiKey) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Server GEMINI_API_KEY is not configured.' })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'Server GEMINI_API_KEY is not configured in Netlify.' })
     };
   }
 
@@ -25,7 +25,8 @@ exports.handler = async function (event, context) {
     const { action, params } = body;
 
     const ai = new GoogleGenAI({ apiKey: apiKey });
-    const PRIMARY_MODEL = 'gemini-3.8-flash';
+    // Use official lightning-fast production model
+    const PRIMARY_MODEL = 'gemini-1.5-flash';
 
     if (action === 'generateContent') {
       const response = await ai.models.generateContent({
@@ -44,13 +45,18 @@ exports.handler = async function (event, context) {
 
     return {
       statusCode: 400,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: 'Invalid action parameter.' })
     };
   } catch (error) {
     console.error('Gemini Serverless Function Error:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: error.message || 'Internal AI Server Error' })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        error: error.message || 'Internal AI Server Error',
+        details: error.toString()
+      })
     };
   }
 };
