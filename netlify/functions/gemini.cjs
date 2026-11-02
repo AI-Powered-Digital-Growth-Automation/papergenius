@@ -25,8 +25,8 @@ exports.handler = async function (event, context) {
     const { action, params } = body;
 
     const ai = new GoogleGenAI({ apiKey: apiKey });
-    // Use official lightning-fast production model
-    const PRIMARY_MODEL = 'gemini-1.5-flash';
+        // Use official active model for @google/genai SDK
+    const PRIMARY_MODEL = 'gemini-2.0-flash';
 
     if (action === 'generateContent') {
       const response = await ai.models.generateContent({
