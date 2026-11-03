@@ -171,45 +171,81 @@ export const AuthProvider = ({ children }) => {
     return studentSubscription.subscribedSubjects.some(sub => normalize(sub) === targetKey);
   };
 
-  // Consume Evaluation Quota (Persistent in Supabase Database)
+    // Consume Evaluation Quota (Secured via Database Atomic RPC)
   const consumeEvaluationQuota = async () => {
-    const nextVal = Math.max(0, studentSubscription.evaluationsRemaining - 1);
-    setStudentSubscription(prev => ({
-      ...prev,
-      evaluationsRemaining: nextVal
-    }));
-
     if (user) {
       try {
-        await supabase
-          .from('user_quotas')
-          .update({ quota_remaining: nextVal, updated_at: new Date().toISOString() })
-          .eq('user_id', user.id);
+        const { data, error } = await supabase.rpc('consume_user_quota', {
+          target_user_id: user.id
+        });
+
+        if (error) {
+          console.warn('RPC quota decrement failed:', error.message);
+          return false;
+        }
+
+        if (data && data.success) {
+          setStudentSubscription(prev => ({
+            ...prev,
+            evaluationsRemaining: data.quota_remaining
+          }));
+          return true;
+        } else {
+          console.warn('Quota exhausted or invalid:', data?.error);
+          return false;
+        }
       } catch (err) {
-        console.warn('Failed to persist evaluation decrement:', err);
+        console.warn('Failed to call consume_user_quota RPC:', err);
+        return false;
       }
+    } else {
+      // Offline/Guest fallback
+      setStudentSubscription(prev => ({
+        ...prev,
+        evaluationsRemaining: Math.max(0, prev.evaluationsRemaining - 1)
+      }));
+      return true;
     }
   };
 
-  // Consume Paper Quota (Persistent in Supabase Database)
+  // Consume Paper Quota (Secured via Database Atomic RPC)
   const consumePaperQuota = async () => {
-    setCoachingSubscription(prev => ({
-      ...prev,
-      papersGeneratedThisMonth: prev.papersGeneratedThisMonth + 1
-    }));
-
     if (user) {
       try {
-        const currentRemaining = Math.max(0, coachingSubscription.papersQuota - (coachingSubscription.papersGeneratedThisMonth + 1));
-        await supabase
-          .from('user_quotas')
-          .update({ quota_remaining: currentRemaining, updated_at: new Date().toISOString() })
-          .eq('user_id', user.id);
+        const { data, error } = await supabase.rpc('consume_user_quota', {
+          target_user_id: user.id
+        });
+
+        if (error) {
+          console.warn('RPC quota decrement failed:', error.message);
+          return false;
+        }
+
+        if (data && data.success) {
+          setCoachingSubscription(prev => ({
+            ...prev,
+            papersGeneratedThisMonth: Math.max(0, prev.papersQuota - data.quota_remaining)
+          }));
+          return true;
+        } else {
+          console.warn('Quota exhausted or invalid:', data?.error);
+          return false;
+        }
       } catch (err) {
-        console.warn('Failed to persist paper decrement:', err);
+        console.warn('Failed to call consume_user_quota RPC:', err);
+        return false;
       }
+    } else {
+      // Offline/Guest fallback
+      setCoachingSubscription(prev => ({
+        ...prev,
+        papersGeneratedThisMonth: prev.papersGeneratedThisMonth + 1
+      }));
+      return true;
     }
   };
+
+  
 
   const upgradeToPremium = async (planName = 'Class 10 Board Pass', subjects = ['Science', 'Mathematics Standard']) => {
     const maxQ = planName.includes('12') ? 150 : 100;
