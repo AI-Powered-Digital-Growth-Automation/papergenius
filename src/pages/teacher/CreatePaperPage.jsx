@@ -97,13 +97,13 @@ function getShuffledPaper(basePaper, setCode) {
 
   let globalQuestionCounter = 1;
 
-  cloned.sections = cloned.sections.map((section, sIdx) => {
+  cloned.sections = cloned.sections.map((section) => {
     let qList = [...(section.questions || [])];
     const len = qList.length;
 
     if (len > 1) {
       if (setCode === 'Set B') {
-        // Shift questions: Move first half to end with interleave
+        // Shift questions: Move first half to end
         const mid = Math.floor(len / 2);
         const firstHalf = qList.slice(0, mid);
         const secondHalf = qList.slice(mid);
@@ -114,13 +114,22 @@ function getShuffledPaper(basePaper, setCode) {
       }
     }
 
-    // Shuffle MCQ Options deterministically based on Set
+    // Helper: strip option label (e.g., "A) 25 cm" -> "25 cm")
+    const cleanText = (txt) => (txt || '').toString().replace(/^[A-D]\)\s*/i, '').trim();
+
+    // Shuffle MCQ Options and accurately remap answerKey
     qList = qList.map((q) => {
       let opts = q.options ? [...q.options] : [];
+      let updatedAnswerKey = q.answerKey;
+
       if (opts.length >= 4) {
+        // Find clean target text of current correct answer
+        const rawKeyText = cleanText(q.answerKey);
+
+        const optTexts = opts.map(o => cleanText(o));
+
         if (setCode === 'Set B') {
-          // Rotate options: [A, B, C, D] -> [C, D, A, B]
-          const optTexts = opts.map(o => o.replace(/^[A-D]\)\s*/i, ''));
+          // Permutation for Set B: indices [2, 3, 0, 1]
           opts = [
             `A) ${optTexts[2] || optTexts[0]}`,
             `B) ${optTexts[3] || optTexts[1]}`,
@@ -128,8 +137,7 @@ function getShuffledPaper(basePaper, setCode) {
             `D) ${optTexts[1] || optTexts[3]}`
           ];
         } else if (setCode === 'Set C') {
-          // Rotate options: [A, B, C, D] -> [B, D, A, C]
-          const optTexts = opts.map(o => o.replace(/^[A-D]\)\s*/i, ''));
+          // Permutation for Set C: indices [1, 3, 0, 2]
           opts = [
             `A) ${optTexts[1] || optTexts[0]}`,
             `B) ${optTexts[3] || optTexts[1]}`,
@@ -137,15 +145,22 @@ function getShuffledPaper(basePaper, setCode) {
             `D) ${optTexts[2] || optTexts[3]}`
           ];
         }
+
+        // Accurately remap answerKey to point to the new shuffled option
+        if (rawKeyText) {
+          const matchedOpt = opts.find(o => cleanText(o).toLowerCase() === rawKeyText.toLowerCase());
+          if (matchedOpt) {
+            updatedAnswerKey = matchedOpt;
+          }
+        }
       }
 
-      const reindexedQ = {
+      return {
         ...q,
         qNumber: globalQuestionCounter++,
-        options: opts
+        options: opts,
+        answerKey: updatedAnswerKey
       };
-
-      return reindexedQ;
     });
 
     return {
