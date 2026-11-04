@@ -67,8 +67,38 @@ export default function AdminDashboardPage() {
     }
   };
 
+    const fetchBlogs = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('blogs')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && data && data.length > 0) {
+        const mapped = data.map(b => ({
+          id: b.id,
+          slug: b.slug,
+          title: b.title,
+          excerpt: b.excerpt || b.title,
+          category: b.category || 'General',
+          readTime: b.read_time || '5 min read',
+          date: new Date(b.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+          author: b.author || 'PaperGenius Academic Team',
+          authorRole: 'Academic Director',
+          tags: ['CBSE', b.category || 'Class 10'],
+          content: b.content
+        }));
+        // Merge Supabase blogs with initial local posts so nothing is lost
+        setBlogs([...mapped, ...initialBlogPosts.filter(p => !mapped.some(m => m.slug === p.slug))]);
+      }
+    } catch (err) {
+      console.warn('Failed to fetch blogs from Supabase:', err);
+    }
+  };
+
   useEffect(() => {
     fetchRealUsers();
+    fetchBlogs();
   }, []);
 
   // Real Database Update: Add Quota (+25)
@@ -131,33 +161,61 @@ export default function AdminDashboardPage() {
   };
 
   // Blog CMS Add
-  const handleCreateBlog = (e) => {
+    // Persistent Blog CMS Add
+  const handleCreateBlog = async (e) => {
     e.preventDefault();
     if (!newBlog.title || !newBlog.content) return;
 
     const autoSlug = newBlog.slug || newBlog.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    const created = {
-      id: autoSlug,
+    const newRecord = {
       slug: autoSlug,
       title: newBlog.title,
       excerpt: newBlog.excerpt || newBlog.title,
-      category: newBlog.category,
-      readTime: '5 min read',
-      date: '24 Oct 2026',
+      content: newBlog.content,
+      category: newBlog.category || 'Class 10',
+      read_time: '5 min read',
       author: 'Gulzar Ahmed (Founder)',
-      authorRole: 'Founder & Academic Director',
-      tags: newBlog.tags.split(',').map(t => t.trim()),
-      content: newBlog.content
+      is_published: true
     };
 
-    setBlogs([created, ...blogs]);
+    // Optimistic UI update
+    const createdLocal = {
+      id: autoSlug,
+      ...newRecord,
+      readTime: '5 min read',
+      date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+      authorRole: 'Founder & Academic Director',
+      tags: (newBlog.tags || 'Class 10, CBSE').split(',').map(t => t.trim())
+    };
+    setBlogs([createdLocal, ...blogs]);
     setShowAddBlogModal(false);
     setNewBlog({ title: '', slug: '', category: 'Class 10', excerpt: '', content: '', tags: 'Class 10, CBSE 2026' });
+
+    // Persist to Supabase
+    try {
+      const { error } = await supabase.from('blogs').upsert([newRecord], { onConflict: 'slug' });
+      if (error) {
+        console.error('Failed to persist blog to Supabase:', error.message);
+      }
+    } catch (err) {
+      console.error('Error saving blog to database:', err);
+    }
   };
 
-  const handleDeleteBlog = (id) => {
-    setBlogs(prev => prev.filter(b => b.id !== id));
+  // Persistent Blog CMS Delete
+  const handleDeleteBlog = async (id) => {
+    const targetBlog = blogs.find(b => b.id === id || b.slug === id);
+    setBlogs(prev => prev.filter(b => b.id !== id && b.slug !== id));
+
+    if (targetBlog) {
+      try {
+        await supabase.from('blogs').delete().or(`id.eq.${id},slug.eq.${id}`);
+      } catch (err) {
+        console.error('Failed to delete blog from Supabase:', err);
+      }
+    }
   };
+
 
   // Filtered Users List
   const filteredUsers = usersList.filter(u => {
