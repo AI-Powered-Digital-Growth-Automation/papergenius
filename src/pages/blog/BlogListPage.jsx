@@ -1,23 +1,58 @@
-﻿import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, BookOpen, Clock, Calendar, ArrowRight, User, Tag, Search } from 'lucide-react';
 import { initialBlogPosts } from '../../data/blogData';
+import { supabase } from '../../services/supabaseClient';
 
 export default function BlogListPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [posts, setPosts] = useState(initialBlogPosts);
+
+  useEffect(() => {
+    async function loadSupabaseBlogs() {
+      try {
+        const { data, error } = await supabase
+          .from('blogs')
+          .select('*')
+          .eq('is_published', true)
+          .order('created_at', { ascending: false });
+
+        if (!error && data && data.length > 0) {
+          const mapped = data.map(b => ({
+            id: b.id,
+            slug: b.slug,
+            title: b.title,
+            excerpt: b.excerpt || b.title,
+            category: b.category || 'Class 10',
+            readTime: b.read_time || '5 min read',
+            date: new Date(b.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+            author: b.author || 'PaperGenius Academic Team',
+            authorRole: 'Founder & Academic Director',
+            tags: ['CBSE', b.category || 'Strategy'],
+            content: b.content
+          }));
+          // Merge: Supabase blogs first, then hardcoded fallbacks without duplicates
+          setPosts([...mapped, ...initialBlogPosts.filter(p => !mapped.some(m => m.slug === p.slug))]);
+        }
+      } catch (err) {
+        console.warn('Could not load blogs from Supabase, using local:', err);
+      }
+    }
+    loadSupabaseBlogs();
+  }, []);
 
   const categories = ['All', 'Class 10', 'Class 12', 'Coaching Tips'];
 
   const filteredPosts = useMemo(() => {
-    return initialBlogPosts.filter((post) => {
+    return posts.filter((post) => {
       const matchCat = selectedCategory === 'All' || post.category === selectedCategory;
       const matchSearch = searchQuery === '' ||
         post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
       return matchCat && matchSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [posts, selectedCategory, searchQuery]);
 
   return (
     <div className="min-h-screen bg-[#050814] text-[#F3F4F6] pb-24 pt-8 px-4 sm:px-6 lg:px-8 text-base">
@@ -97,7 +132,7 @@ export default function BlogListPage() {
               </p>
 
               <div className="flex flex-wrap gap-1.5 pt-2">
-                {post.tags.map((t, idx) => (
+                {(post.tags || []).map((t, idx) => (
                   <span key={idx} className="text-[11px] font-mono text-[#67E8F9] bg-[#06B6D4]/10 px-2 py-0.5 rounded">
                     #{t}
                   </span>

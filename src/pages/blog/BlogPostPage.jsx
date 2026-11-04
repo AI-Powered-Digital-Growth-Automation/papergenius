@@ -1,11 +1,70 @@
-﻿import React from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { ArrowLeft, Clock, Calendar, User, Share2, Sparkles, Zap, Building2, BookOpen } from 'lucide-react';
 import { initialBlogPosts } from '../../data/blogData';
+import { supabase } from '../../services/supabaseClient';
 
 export default function BlogPostPage() {
   const { slug } = useParams();
-  const post = initialBlogPosts.find((p) => p.slug === slug);
+  
+  // 1. Initial check in local hardcoded data
+  const localMatch = initialBlogPosts.find((p) => p.slug === slug);
+  const [post, setPost] = useState(localMatch || null);
+  const [loading, setLoading] = useState(!localMatch);
+
+  useEffect(() => {
+    // If already found in local memory, no need to query unless we want to refresh
+    if (localMatch) {
+      setPost(localMatch);
+      setLoading(false);
+      return;
+    }
+
+    // Otherwise fetch from Supabase blogs table
+    async function fetchPostFromDb() {
+      try {
+        const { data, error } = await supabase
+          .from('blogs')
+          .select('*')
+          .eq('slug', slug)
+          .eq('is_published', true)
+          .maybeSingle();
+
+        if (data && !error) {
+          setPost({
+            id: data.id,
+            slug: data.slug,
+            title: data.title,
+            excerpt: data.excerpt || data.title,
+            category: data.category || 'Class 10',
+            readTime: data.read_time || '5 min read',
+            date: new Date(data.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+            author: data.author || 'PaperGenius Academic Team',
+            authorRole: 'Founder & Academic Director',
+            tags: ['CBSE', data.category || 'Strategy'],
+            content: data.content
+          });
+        }
+      } catch (err) {
+        console.warn('Failed to load article from Supabase:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPostFromDb();
+  }, [slug, localMatch]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#050814] text-white flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs font-mono text-slate-400">Loading Academic Article...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!post) {
     return <Navigate to="/blog" replace />;
@@ -13,7 +72,7 @@ export default function BlogPostPage() {
 
   return (
     <div className="min-h-screen bg-[#050814] text-[#F3F4F6] pb-24 pt-8 px-4 sm:px-6 lg:px-8 text-base">
-      
+
       {/* Back button */}
       <div className="max-w-4xl mx-auto mb-6">
         <Link
@@ -26,7 +85,7 @@ export default function BlogPostPage() {
       </div>
 
       <article className="max-w-4xl mx-auto bg-[#080D24] p-8 sm:p-12 rounded-3xl border border-[rgba(140,120,255,0.25)] shadow-2xl space-y-8">
-        
+
         {/* Header */}
         <div className="space-y-4 border-b border-white/10 pb-6">
           <div className="flex flex-wrap items-center gap-3">
@@ -88,29 +147,29 @@ export default function BlogPostPage() {
             </span>
             <h4 className="text-xl font-black text-white">Put These Strategies Into Practice</h4>
             <p className="text-xs sm:text-sm text-[#94A3B8]">
-              Evaluate handwritten answer sheets with AI or auto-generate Set A/B/C coaching tests.
+              Generate real CBSE blueprint question papers or evaluate handwritten answers with AI step-marking.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2 shrink-0">
+          <div className="flex flex-col sm:flex-row gap-3 shrink-0">
             <Link
-              to="/student"
-              className="btn-gradient px-5 py-3 rounded-xl text-xs sm:text-sm font-bold text-white shadow-md flex items-center gap-1.5"
+              to="/student/evaluator"
+              className="btn-gradient px-5 py-3 rounded-xl font-bold text-xs sm:text-sm text-white shadow-lg flex items-center justify-center gap-1.5"
             >
-              <Zap className="w-4 h-4 text-yellow-300 fill-yellow-300" />
-              <span>Try Student OS</span>
+              <Sparkles className="w-4 h-4" />
+              <span>Try AI Evaluator Free</span>
             </Link>
             <Link
-              to="/teacher/create-paper"
-              className="px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs sm:text-sm font-bold"
+              to="/teacher/portal"
+              className="px-5 py-3 rounded-xl font-bold text-xs sm:text-sm bg-[#080D24] border border-white/10 hover:border-white/30 text-white flex items-center justify-center gap-1.5 transition-all"
             >
-              Coaching Studio
+              <Building2 className="w-4 h-4" />
+              <span>Coaching Portal</span>
             </Link>
           </div>
         </div>
 
       </article>
-
     </div>
   );
 }
