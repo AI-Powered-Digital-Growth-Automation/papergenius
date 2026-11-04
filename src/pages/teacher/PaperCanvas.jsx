@@ -134,14 +134,16 @@ export default function PaperCanvas({
             <p className="text-[10px] text-slate-400">Powered by PaperGenius CBSE Exam OS • {formData.coachingName || 'Coaching Institute'}</p>
           </div>
 
-          {/* Real Dynamic QR Verification Code */}
+                           {/* Real Dynamic QR Verification Code */}
           <div className="flex items-center gap-2.5 shrink-0 border border-slate-300 p-2 rounded-xl bg-slate-50 print:bg-white print:border-slate-400">
             <div className="text-right">
               <span className="block text-[10px] font-bold text-black uppercase leading-tight">Scan for</span>
               <span className="block text-[10px] font-black text-cyan-700 uppercase leading-tight">Answer Key</span>
             </div>
             <img
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent(`https://papergenius.in/pyq-vault?ref=paper_${activeSet}`)}`}
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent(
+                `https://papergenius.in/verify-paper/${(formData.subject || 'cbse-paper').toLowerCase().replace(/\s+/g, '-')}-${(formData.classLevel || '10').replace(/\s+/g, '')}?set=${encodeURIComponent(activeSet || 'Set A')}`
+              )}`}
               alt="Scan for Answer Key QR Code"
               className="w-14 h-14 object-contain print:w-14 print:h-14"
             />

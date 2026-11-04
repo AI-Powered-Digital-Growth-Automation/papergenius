@@ -23,6 +23,7 @@ import StudentEvaluatorPage from './pages/student/StudentEvaluatorPage';
 import StudentDashboardPage from './pages/student/StudentDashboardPage';
 import PercentagePredictorPage from './pages/student/PercentagePredictorPage';
 import PyqVaultPage from './pages/pyq/PyqVaultPage';
+import VerifyPaperPage from './pages/pyq/VerifyPaperPage';
 import BlogListPage from './pages/blog/BlogListPage';
 import BlogPostPage from './pages/blog/BlogPostPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
@@ -45,6 +46,7 @@ export default function App() {
               <Route path="/pricing" element={<PricingPage />} />
               <Route path="/predictor" element={<PercentagePredictorPage />} />
               <Route path="/pyq-vault" element={<PyqVaultPage />} />
+              <Route path="/verify-paper/:paperId" element={<VerifyPaperPage />} />
               <Route path="/blog" element={<BlogListPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
                             <Route
