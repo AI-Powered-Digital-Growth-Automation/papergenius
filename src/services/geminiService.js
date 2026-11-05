@@ -2,28 +2,31 @@
  * Calls the Netlify serverless backend.
  * The Gemini API key remains server-side only.
  */
-
 async function callGeminiSecure(params, maxRetries = 2) {
   let attempt = 0;
+  // Endpoints to check: Netlify first, then Vercel
+  const endpoints = ['/.netlify/functions/gemini', '/api/gemini'];
 
   while (attempt <= maxRetries) {
-    try {
-   // Secure serverless backend endpoint
-      const res = await fetch('/.netlify/functions/gemini', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'generateContent', params })
-      });
+    for (const endpoint of endpoints) {
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'generateContent', params })
+        });
 
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.text) {
-          return data.text;
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.text) {
+            return data.text;
+          }
         }
+      } catch (netErr) {
+        // Try next endpoint or retry loop
       }
-    } catch (netErr) {
-      // Serverless not available (e.g. running vite dev locally without netlify cli)
     }
+
     attempt++;
     if (attempt <= maxRetries) {
       await new Promise(r => setTimeout(r, 1200 * attempt));
