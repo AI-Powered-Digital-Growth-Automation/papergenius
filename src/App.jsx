@@ -4,8 +4,8 @@ import Header from './components/common/Header';
 import Footer from './components/common/Footer';
 import ScrollToTop from './components/common/ScrollToTop';
 import FloatingNavArrows from './components/common/FloatingNavArrows';
+import WhatsAppButton from './components/common/WhatsAppButton';
 import ProtectedRoute from './components/common/ProtectedRoute';
-
 import LandingPage from './pages/landing/LandingPage';
 import TeacherPage from './pages/teacher/TeacherPage';
 import TeacherDashboardPage from './pages/teacher/TeacherDashboardPage';
@@ -132,6 +132,7 @@ export default function App() {
           </main>
           <Footer />
           <FloatingNavArrows />
+          <WhatsAppButton />
         </div>
       </AuthProvider>
     </Router>
