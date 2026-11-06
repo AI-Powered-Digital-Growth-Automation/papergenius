@@ -9,13 +9,8 @@ export default function WhatsAppButton() {
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
 
   return (
-    <aside aria-label="WhatsApp Support" className="fixed bottom-20 right-5 z-50 flex items-center group">
-      {/* Tooltip on Hover */}
-      <span className="hidden sm:inline-block mr-3 px-3 py-1.5 rounded-xl bg-slate-900/95 text-white text-xs font-semibold border border-emerald-500/30 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
-        💬 Chat on WhatsApp
-      </span>
-
-      {/* Button */}
+    <aside aria-label="WhatsApp Support" className="fixed bottom-6 left-5 z-50 flex items-center group">
+      {/* Button on Left */}
       <a
         href={whatsappUrl}
         target="_blank"
@@ -26,6 +21,11 @@ export default function WhatsAppButton() {
         <span className="absolute w-full h-full rounded-full bg-emerald-500 animate-ping opacity-25 pointer-events-none" />
         <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7 fill-white" />
       </a>
+
+      {/* Tooltip on Hover (Opens towards Right) */}
+      <span className="hidden sm:inline-block ml-3 px-3 py-1.5 rounded-xl bg-slate-900/95 text-white text-xs font-semibold border border-emerald-500/30 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
+        💬 Chat on WhatsApp
+      </span>
     </aside>
   );
 }

@@ -2,13 +2,13 @@
 import { supabase } from '../../services/supabaseClient';
 import { 
   ShieldAlert, Users, BookOpen, BarChart3, PlusCircle, 
-  CheckCircle2, XCircle, Search, Edit3, Trash2, ArrowUpRight, 
-  Sparkles, Award, Building2, User, RefreshCw, Key, Filter, Check
+  CheckCircle2, XCircle, Search, Trash2, Check,
+  CreditCard, Clock, Building2, User, RefreshCw
 } from 'lucide-react';
 import { initialBlogPosts } from '../../data/blogData';
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState('subscriptions'); // 'subscriptions' | 'blog-cms' | 'analytics'
+  const [activeTab, setActiveTab] = useState('subscriptions'); // 'subscriptions' | 'payments' | 'blog-cms' | 'analytics'
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRoleFilter, setSelectedRoleFilter] = useState('All');
   
@@ -24,9 +24,13 @@ export default function AdminDashboardPage() {
     tags: 'Class 10, CBSE 2026'
   });
 
-    // Real-time Supabase Live User Tracking State (No Fake Users)
+  // Real-time Supabase Live User Tracking State
   const [usersList, setUsersList] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
+
+  // Payment Requests State
+  const [paymentsList, setPaymentsList] = useState([]);
+  const [loadingPayments, setLoadingPayments] = useState(true);
 
   const fetchRealUsers = async () => {
     setLoadingUsers(true);
@@ -67,7 +71,25 @@ export default function AdminDashboardPage() {
     }
   };
 
-    const fetchBlogs = async () => {
+  const fetchPaymentRequests = async () => {
+    setLoadingPayments(true);
+    try {
+      const { data, error } = await supabase
+        .from('payment_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        setPaymentsList(data);
+      }
+    } catch (err) {
+      console.warn('Failed to fetch payment requests:', err);
+    } finally {
+      setLoadingPayments(false);
+    }
+  };
+
+  const fetchBlogs = async () => {
     try {
       const { data, error } = await supabase
         .from('blogs')
@@ -88,7 +110,6 @@ export default function AdminDashboardPage() {
           tags: ['CBSE', b.category || 'Class 10'],
           content: b.content
         }));
-        // Merge Supabase blogs with initial local posts so nothing is lost
         setBlogs([...mapped, ...initialBlogPosts.filter(p => !mapped.some(m => m.slug === p.slug))]);
       }
     } catch (err) {
@@ -99,7 +120,72 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     fetchRealUsers();
     fetchBlogs();
+    fetchPaymentRequests();
   }, []);
+
+  // Approve UTR Payment & Auto-credit Quota
+  const handleApprovePayment = async (payment) => {
+    let quotaBonus = 25;
+    if (payment.amount?.includes('4,999') || payment.plan_name?.toLowerCase().includes('director')) {
+      quotaBonus = 150;
+    } else if (payment.amount?.includes('799') || payment.plan_name?.toLowerCase().includes('master')) {
+      quotaBonus = 12;
+    } else if (payment.amount?.includes('599') || payment.plan_name?.toLowerCase().includes('booster')) {
+      quotaBonus = 25;
+    } else if (payment.amount?.includes('499')) {
+      quotaBonus = 20;
+    } else if (payment.amount?.includes('199')) {
+      quotaBonus = 10;
+    }
+
+    // 1. Update payment_requests status
+    setPaymentsList(prev => prev.map(p => p.id === payment.id ? { ...p, status: 'approved' } : p));
+
+    try {
+      await supabase
+        .from('payment_requests')
+        .update({
+          status: 'approved',
+          approved_at: new Date().toISOString(),
+          approved_by: 'Gulzar Ahmed (Founder)'
+        })
+        .eq('id', payment.id);
+
+      // 2. Add Quota to user if existing in user_quotas
+      const existingUser = usersList.find(u => u.email?.toLowerCase() === payment.email?.toLowerCase());
+      if (existingUser) {
+        await handleAddQuota(existingUser.id, quotaBonus);
+      } else {
+        // Upsert new quota row for user
+        await supabase.from('user_quotas').upsert({
+          email: payment.email.toLowerCase(),
+          role: payment.plan_name?.toLowerCase().includes('director') || payment.plan_name?.toLowerCase().includes('master') ? 'teacher' : 'student',
+          plan_name: payment.plan_name,
+          is_premium: true,
+          quota_remaining: quotaBonus,
+          quota_max: quotaBonus,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'email' });
+        fetchRealUsers();
+      }
+    } catch (err) {
+      console.error('Failed to approve payment:', err);
+    }
+  };
+
+  // Reject UTR Payment
+  const handleRejectPayment = async (id) => {
+    setPaymentsList(prev => prev.map(p => p.id === id ? { ...p, status: 'rejected' } : p));
+    try {
+      await supabase
+        .from('payment_requests')
+        .update({ status: 'rejected' })
+        .eq('id', id);
+    } catch (err) {
+      console.error('Failed to reject payment:', err);
+    }
+  };
 
   // Real Database Update: Add Quota (+25)
   const handleAddQuota = async (id, amountToAdd) => {
@@ -109,7 +195,6 @@ export default function AdminDashboardPage() {
     const newLeft = targetUser.quotaLeft + amountToAdd;
     const newMax = targetUser.quotaMax + amountToAdd;
 
-    // Optimistic UI update
     setUsersList(prev => prev.map(u => {
       if (u.id === id) {
         return { ...u, quotaLeft: newLeft, quotaMax: newMax, status: 'Active' };
@@ -117,7 +202,6 @@ export default function AdminDashboardPage() {
       return u;
     }));
 
-    // Persist to Supabase Database
     try {
       await supabase
         .from('user_quotas')
@@ -160,8 +244,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Blog CMS Add
-    // Persistent Blog CMS Add
+  // Persistent Blog CMS Add
   const handleCreateBlog = async (e) => {
     e.preventDefault();
     if (!newBlog.title || !newBlog.content) return;
@@ -178,7 +261,6 @@ export default function AdminDashboardPage() {
       is_published: true
     };
 
-    // Optimistic UI update
     const createdLocal = {
       id: autoSlug,
       ...newRecord,
@@ -191,7 +273,6 @@ export default function AdminDashboardPage() {
     setShowAddBlogModal(false);
     setNewBlog({ title: '', slug: '', category: 'Class 10', excerpt: '', content: '', tags: 'Class 10, CBSE 2026' });
 
-    // Persist to Supabase
     try {
       const { error } = await supabase.from('blogs').upsert([newRecord], { onConflict: 'slug' });
       if (error) {
@@ -216,7 +297,6 @@ export default function AdminDashboardPage() {
     }
   };
 
-
   // Filtered Users List
   const filteredUsers = usersList.filter(u => {
     const matchRole = selectedRoleFilter === 'All' || u.role === selectedRoleFilter;
@@ -226,6 +306,8 @@ export default function AdminDashboardPage() {
       u.plan.toLowerCase().includes(searchQuery.toLowerCase());
     return matchRole && matchSearch;
   });
+
+  const pendingPaymentsCount = paymentsList.filter(p => p.status === 'pending').length;
 
   return (
     <div className="min-h-screen bg-[#050814] text-[#F3F4F6] pb-24 pt-6 px-4 sm:px-6 lg:px-8 text-base">
@@ -244,7 +326,7 @@ export default function AdminDashboardPage() {
             </span>
           </div>
 
-                    <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center gap-3 mb-2">
             <img src="/logo.png" alt="PaperGenius Logo" className="w-10 h-10 object-contain rounded-xl shadow-lg" />
             <h1 className="text-2xl sm:text-3xl font-black text-white">
               Digital Gulzar Master Command Center
@@ -277,7 +359,24 @@ export default function AdminDashboardPage() {
               }`}
             >
               <Users className="w-4 h-4" />
-              <span>User & Subscription Tracker ({usersList.length})</span>
+              <span>Users & Quotas ({usersList.length})</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('payments')}
+              className={`relative flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                activeTab === 'payments'
+                  ? 'bg-gradient-to-r from-[#7C3CFF] to-[#06B6D4] text-white shadow-md'
+                  : 'text-[#94A3B8] hover:text-white'
+              }`}
+            >
+              <CreditCard className="w-4 h-4" />
+              <span>UTR Approvals</span>
+              {pendingPaymentsCount > 0 && (
+                <span className="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 text-xs font-black">
+                  {pendingPaymentsCount}
+                </span>
+              )}
             </button>
 
             <button
@@ -426,7 +525,99 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* ================= TAB 2: BLOG CMS ================= */}
+        {/* ================= TAB 2: PAYMENT APPROVALS (UTR QUEUE) ================= */}
+        {activeTab === 'payments' && (
+          <div className="space-y-4">
+            <div className="p-4 rounded-2xl bg-[#080D24] border border-white/10 flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-white">Payment Requests & UTR Verification</h3>
+                <p className="text-xs text-[#94A3B8]">Review submitted UPI/PhonePe UTRs and activate instant user quotas</p>
+              </div>
+              <button
+                onClick={fetchPaymentRequests}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-cyan-300 border border-white/10"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Refresh Queue</span>
+              </button>
+            </div>
+
+            <div className="overflow-x-auto rounded-2xl bg-[#080D24] border border-white/10 shadow-xl">
+              <table className="w-full text-left text-xs sm:text-sm border-collapse">
+                <thead className="bg-[#0C1330] text-[#67E8F9] font-mono uppercase text-[11px] border-b border-white/10">
+                  <tr>
+                    <th className="p-4">Date</th>
+                    <th className="p-4">Customer Email</th>
+                    <th className="p-4">Plan / Price</th>
+                    <th className="p-4">Submitted UTR</th>
+                    <th className="p-4">Status</th>
+                    <th className="p-4 text-right">Approval Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5 text-[#CBD5E1]">
+                  {paymentsList.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="p-8 text-center text-slate-500 font-mono text-xs">
+                        No payment requests submitted yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    paymentsList.map((p) => (
+                      <tr key={p.id} className="hover:bg-white/[0.02]">
+                        <td className="p-4 text-xs font-mono text-slate-400">
+                          {new Date(p.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                        </td>
+                        <td className="p-4 font-semibold text-white">
+                          {p.email}
+                        </td>
+                        <td className="p-4">
+                          <span className="font-bold text-cyan-300">{p.plan_name}</span>
+                          <span className="block text-[11px] font-mono text-emerald-400">{p.amount}</span>
+                        </td>
+                        <td className="p-4 font-mono font-bold text-white select-all">
+                          {p.utr_number}
+                        </td>
+                        <td className="p-4">
+                          <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                            p.status === 'approved'
+                              ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-500/30'
+                              : p.status === 'rejected'
+                              ? 'bg-red-950/60 text-red-400 border border-red-500/30'
+                              : 'bg-amber-950/60 text-amber-300 border border-amber-500/30'
+                          }`}>
+                            {p.status}
+                          </span>
+                        </td>
+                        <td className="p-4 text-right space-x-2 whitespace-nowrap">
+                          {p.status === 'pending' ? (
+                            <>
+                              <button
+                                onClick={() => handleApprovePayment(p)}
+                                className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition shadow"
+                              >
+                                Approve & Credit
+                              </button>
+                              <button
+                                onClick={() => handleRejectPayment(p.id)}
+                                className="px-3 py-1.5 rounded-lg bg-red-950/50 hover:bg-red-900/60 text-red-300 text-xs border border-red-500/30"
+                              >
+                                Reject
+                              </button>
+                            </>
+                          ) : (
+                            <span className="text-xs text-slate-500 font-mono">Completed</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* ================= TAB 3: BLOG CMS ================= */}
         {activeTab === 'blog-cms' && (
           <div className="space-y-5">
             <div className="flex items-center justify-between">
@@ -540,7 +731,7 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* ================= TAB 3: REVENUE & ANALYTICS ================= */}
+        {/* ================= TAB 4: REVENUE & ANALYTICS ================= */}
         {activeTab === 'analytics' && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <div className="p-6 rounded-2xl bg-[#080D24] border border-white/10 space-y-2">
@@ -564,7 +755,7 @@ export default function AdminDashboardPage() {
             <div className="p-6 rounded-2xl bg-[#080D24] border border-white/10 space-y-2">
               <span className="text-xs text-[#94A3B8] uppercase font-bold tracking-wider">Total AI Checks Run</span>
               <div className="text-3xl font-black text-[#5EE7FF]">348 Evaluations</div>
-              <p className="text-xs text-emerald-400 font-semibold">Gemini 3.8-Flash 99.8% Success</p>
+              <p className="text-xs text-emerald-400 font-semibold">Gemini 3.5-Flash 99.8% Success</p>
             </div>
           </div>
         )}
