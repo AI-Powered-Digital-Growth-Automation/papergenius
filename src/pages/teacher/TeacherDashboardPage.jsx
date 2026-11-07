@@ -66,10 +66,10 @@ export default function TeacherDashboardPage() {
   const directorName = user?.user_metadata?.full_name || 'Gulzar Ahmed (Director)';
   const directorEmail = user?.email || 'digitalgulzarservices@gmail.com';
 
-  const quotaUsed = coachingSubscription?.papersGeneratedThisMonth || 14;
-  const quotaTotal = coachingSubscription?.papersQuota || 150;
+  const quotaTotal = coachingSubscription?.papersQuota ?? 2;
+  const quotaUsed = coachingSubscription?.papersGeneratedThisMonth ?? 0;
   const quotaRemaining = Math.max(0, quotaTotal - quotaUsed);
-  const progressPercent = Math.min(100, Math.round((quotaUsed / quotaTotal) * 100));
+  const progressPercent = Math.min(100, Math.round((quotaUsed / (quotaTotal || 1)) * 100));
 
   // Saved Papers History List
   const [paperHistory] = useState([

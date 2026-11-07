@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { 
   Sparkles, Printer, RefreshCw, AlertCircle, FileText, ShieldAlert, Award, 
   Building2, ChevronRight, CheckSquare, Zap, Check, FileCheck, BookCheck,
