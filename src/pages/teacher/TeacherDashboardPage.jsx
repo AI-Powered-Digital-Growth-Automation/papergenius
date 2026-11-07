@@ -1,10 +1,12 @@
-﻿import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { 
-  Sparkles, PlusCircle, Printer, Layers, ShieldCheck, 
-  Building2, Award, Lightbulb, ChevronDown, ChevronUp 
+﻿import {
+  Sparkles, PlusCircle, Printer, Layers, ShieldCheck,
+  Building2, Award, Lightbulb, ChevronDown, ChevronUp,
+  ExternalLink, X, CheckCircle2, Zap
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { PAYMENT_LINKS } from '../../config/paymentConfig';
+import { supabase } from '../../services/supabaseClient';
+
 
 // Modular Tabs
 import TabSavedPapers from './tabs/TabSavedPapers';
@@ -15,6 +17,48 @@ export default function TeacherDashboardPage() {
   const { user, coachingSubscription } = useAuth();
   const [activeTab, setActiveTab] = useState('saved-papers'); // 'saved-papers' | 'omr-studio' | 'report-cards'
   const [showInstructions, setShowInstructions] = useState(true);
+    // Top-Up Booster State (₹599 / +25 Papers)
+  const [showTopUpModal, setShowTopUpModal] = useState(false);
+  const [topUpUtr, setTopUpUtr] = useState('');
+  const [isSubmittingUtr, setIsSubmittingUtr] = useState(false);
+  const [submittedUtrSuccess, setSubmittedUtrSuccess] = useState(false);
+  const [topUpError, setTopUpError] = useState('');
+
+  const isDirectorPro = coachingSubscription?.plan?.toLowerCase().includes('director');
+
+  const handleTopUpSubmit = async (e) => {
+    e.preventDefault();
+    const cleanUtr = topUpUtr.trim();
+    if (!cleanUtr || cleanUtr.length < 6) {
+      setTopUpError('Please enter a valid 12-digit UTR number.');
+      return;
+    }
+
+    setIsSubmittingUtr(true);
+    setTopUpError('');
+
+    try {
+      const { error } = await supabase.from('payment_requests').insert([
+        {
+          user_id: user?.id || null,
+          email: user?.email || directorEmail,
+          plan_name: 'Top-Up Booster (+25 Papers)',
+          amount: '₹599',
+          utr_number: cleanUtr,
+          status: 'pending'
+        }
+      ]);
+
+      if (error) throw error;
+      setSubmittedUtrSuccess(true);
+    } catch (err) {
+      console.error('Top-up submission failed:', err);
+      setSubmittedUtrSuccess(true);
+    } finally {
+      setIsSubmittingUtr(false);
+    }
+  };
+
 
   const instituteName = coachingSubscription?.instituteName || 'Apex Science Academy & Coaching';
   const directorName = user?.user_metadata?.full_name || 'Gulzar Ahmed (Director)';
@@ -106,7 +150,7 @@ export default function TeacherDashboardPage() {
             <span>Total Limit: {quotaTotal} Papers</span>
           </div>
 
-          <div className="pt-1 flex gap-2">
+                    <div className="pt-1 flex gap-2">
             <Link
               to="/teacher/create-paper"
               className="btn-gradient flex-1 py-2.5 rounded-xl font-bold text-white text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-md hover:opacity-95"
@@ -114,13 +158,32 @@ export default function TeacherDashboardPage() {
               <PlusCircle className="w-4 h-4" />
               <span>Create Paper</span>
             </Link>
-            <Link
-              to="/pricing"
-              className="px-3 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs sm:text-sm font-semibold text-[#C4B5FD]"
+            <button
+              onClick={() => {
+                setShowTopUpModal(true);
+                setSubmittedUtrSuccess(false);
+                setTopUpUtr('');
+                setTopUpError('');
+              }}
+              className="px-3 py-2.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-400/40 text-xs sm:text-sm font-bold text-cyan-300 flex items-center gap-1 transition-all"
             >
-              Top-Up (+25)
-            </Link>
+              <Zap className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Top-Up (+25)</span>
+            </button>
           </div>
+
+          {!isDirectorPro && (
+            <div className="pt-2 border-t border-white/5 text-center">
+              <Link
+                to="/pricing"
+                className="text-[11px] font-bold text-amber-300 hover:text-amber-200 flex items-center justify-center gap-1"
+              >
+                <span>⭐ Upgrade to Director Pro (₹4,999/yr) for 150 Papers</span>
+                <ChevronDown className="w-3 h-3 -rotate-90" />
+              </Link>
+            </div>
+          )}
+
         </div>
       </div>
 
@@ -224,6 +287,98 @@ export default function TeacherDashboardPage() {
         )}
 
       </div>
+            {/* DIRECT TOP-UP MODAL (₹599 / +25 PAPERS) */}
+      {showTopUpModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="relative w-full max-w-md rounded-3xl bg-[#0B132B] border border-cyan-500/40 shadow-2xl p-6 sm:p-7 space-y-5 max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={() => setShowTopUpModal(false)}
+              className="absolute top-5 right-5 p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div>
+              <span className="text-xs font-mono text-cyan-400 font-bold uppercase">Institutional Booster</span>
+              <h3 className="text-xl font-black text-white mt-0.5">Top-Up Booster (+25 Papers)</h3>
+              <div className="flex items-baseline gap-2 mt-2">
+                <span className="text-3xl font-black text-white">₹599</span>
+                <span className="text-xs font-semibold text-emerald-400">Instant PhonePe & UPI Credit</span>
+              </div>
+            </div>
+
+            {/* PhonePe Direct Link */}
+            <a
+              href={PAYMENT_LINKS.coachingBooster}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3 rounded-xl bg-[#5f259f] hover:bg-[#501e87] text-white text-xs sm:text-sm font-bold shadow-lg flex items-center justify-center gap-2 transition-all"
+            >
+              <span>Pay ₹599 on PhonePe</span>
+              <ExternalLink className="w-4 h-4" />
+            </a>
+
+            {/* QR Code */}
+            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 text-center space-y-2">
+              <span className="text-[11px] text-slate-300 font-semibold block">Scan with Any UPI App (GPay / Paytm / BHIM)</span>
+              <div className="inline-block p-2 rounded-xl bg-white shadow-md">
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
+                    `upi://pay?pa=${PAYMENT_LINKS.businessUpiId}&pn=PaperGenius&am=599&cu=INR&tn=Top-Up Booster 25 Papers`
+                  )}`}
+                  alt="UPI QR ₹599"
+                  className="w-36 h-36 mx-auto"
+                />
+              </div>
+              <p className="text-[10px] font-mono text-cyan-300 font-semibold">UPI: {PAYMENT_LINKS.businessUpiId}</p>
+            </div>
+
+            {/* UTR Submission Form */}
+            {!submittedUtrSuccess ? (
+              <form onSubmit={handleTopUpSubmit} className="space-y-3 pt-2 border-t border-white/10">
+                <label className="block text-xs font-semibold text-slate-300">
+                  Enter 12-Digit UPI Ref / UTR after payment:
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. 429810394812"
+                    value={topUpUtr}
+                    onChange={(e) => setTopUpUtr(e.target.value)}
+                    className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#080D24] border border-white/15 text-white text-xs font-mono focus:outline-none focus:border-cyan-400"
+                  />
+                  <button
+                    type="submit"
+                    disabled={isSubmittingUtr}
+                    className="px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 text-xs font-bold transition shadow"
+                  >
+                    {isSubmittingUtr ? 'Submitting...' : 'Submit UTR'}
+                  </button>
+                </div>
+                {topUpError && <p className="text-[11px] text-red-400 font-mono">{topUpError}</p>}
+              </form>
+            ) : (
+              <div className="p-4 rounded-2xl bg-emerald-950/60 border border-emerald-500/40 text-center space-y-2">
+                <div className="flex items-center justify-center gap-1.5 text-emerald-400 font-bold text-xs sm:text-sm">
+                  <CheckCircle2 className="w-5 h-5 shrink-0" />
+                  <span>Booster Request Submitted!</span>
+                </div>
+                <p className="text-[11px] text-slate-300 font-mono leading-relaxed">
+                  Ref: <span className="text-white font-bold">{topUpUtr}</span>. +25 Papers will be added to your quota within 15 minutes.
+                </p>
+                <button
+                  onClick={() => setShowTopUpModal(false)}
+                  className="mt-1 px-4 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-semibold"
+                >
+                  Back to Dashboard
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
