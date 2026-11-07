@@ -1,4 +1,5 @@
-﻿import {
+﻿import React, { useState } from 'react';
+import {
   Sparkles, PlusCircle, Printer, Layers, ShieldCheck,
   Building2, Award, Lightbulb, ChevronDown, ChevronUp,
   ExternalLink, X, CheckCircle2, Zap
