@@ -10,7 +10,7 @@ import Class10FreeFeatures from '../../components/class10/Class10FreeFeatures';
 import Class10PremiumFeatures from '../../components/class10/Class10PremiumFeatures';
 import Class10FaqSection from '../../components/class10/Class10FaqSection';
 import Class10VisualShowcase from '../../components/class10/Class10VisualShowcase';
-
+import SEO from '../../components/common/SEO';
 export default function Class10Page() {
   const coreSubjects = [
     {
@@ -41,7 +41,10 @@ export default function Class10Page() {
 
   return (
     <div className="space-y-20 py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-
+      <SEO 
+        title="CBSE Class 10 Board Exam OS 2026 | Solved PYQ & AI Evaluator"
+        description="Download CBSE Class 10 Science, Maths, Social Science solved previous year papers (2022-2026) and evaluate handwritten answer sheets with AI step-marking."
+      />
       {/* 1. HERO SECTION */}
       <section className="text-center max-w-4xl mx-auto space-y-6">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#06B6D4]/15 border border-[#06B6D4]/30 text-[#06B6D4] text-xs sm:text-sm font-mono font-bold uppercase tracking-wider">

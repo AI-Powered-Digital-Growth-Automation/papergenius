@@ -10,6 +10,8 @@ import Class12FreeFeatures from '../../components/class12/Class12FreeFeatures';
 import Class12PremiumFeatures from '../../components/class12/Class12PremiumFeatures';
 import Class12FaqSection from '../../components/class12/Class12FaqSection';
 import Class12VisualShowcase from '../../components/class12/Class12VisualShowcase';
+import SEO from '../../components/common/SEO';
+
 
 export default function Class12Page() {
   const streamSubjects = [
@@ -53,7 +55,10 @@ export default function Class12Page() {
 
   return (
     <div className="space-y-20 py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-
+      <SEO 
+        title="CBSE Class 12 Board Exam Hub 2026 | Physics Derivations & AI Evaluator"
+        description="Master CBSE Class 12 Physics derivations, Chemistry named reactions, Maths calculus PYQs (2022-2026), and evaluate handwritten answer sheets with AI step-marking."
+      />
       {/* 1. HERO SECTION */}
       <section className="text-center max-w-4xl mx-auto space-y-6">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#7C3CFF]/15 border border-[#7C3CFF]/30 text-[#A78BFA] text-xs sm:text-sm font-mono font-bold uppercase tracking-wider">

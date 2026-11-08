@@ -4,6 +4,7 @@ import {
   Calculator, Sparkles, TrendingUp, AlertTriangle, CheckCircle2, 
   ArrowRight, ShieldCheck, Zap, Share2, HelpCircle, Award, Target
 } from 'lucide-react';
+import SEO from '../../components/common/SEO';
 
 export default function PercentagePredictorPage() {
   const [grade, setGrade] = useState('Class 10');
@@ -53,7 +54,11 @@ export default function PercentagePredictorPage() {
 
   return (
     <div className="min-h-screen bg-[#050814] text-[#F3F4F6] pb-24 pt-8 px-4 sm:px-6 lg:px-8 text-base">
-      
+      <SEO 
+  title="CBSE Board Percentage & Percentile Predictor 2026 | Free AI Tool | PaperGenius"
+  description="Predict your CBSE Class 10 and 12 board percentage with high accuracy using your pre-board marks, internal assessment scores, and historical CBSE moderation bell-curve analytics."
+/>
+
       {/* Top Banner */}
       <div className="max-w-4xl mx-auto mb-10 text-center space-y-4">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#06B6D4]/15 border border-[#06B6D4]/30 text-xs sm:text-sm font-bold text-[#67E8F9]">

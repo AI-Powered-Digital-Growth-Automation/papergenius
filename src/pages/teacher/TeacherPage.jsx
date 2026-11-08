@@ -10,6 +10,8 @@ import CoachingFreeFeatures from '../../components/coaching/CoachingFreeFeatures
 import CoachingPremiumFeatures from '../../components/coaching/CoachingPremiumFeatures';
 import CoachingFaqSection from '../../components/coaching/CoachingFaqSection';
 import CoachingVisualShowcase from '../../components/coaching/CoachingVisualShowcase';
+import SEO from '../../components/common/SEO';
+
 
 export default function TeacherPage() {
   const quickPillars = [
@@ -41,6 +43,10 @@ export default function TeacherPage() {
 
   return (
     <div className="space-y-20 py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <SEO 
+  title="Coaching OS & AI Question Paper Studio | Anti-Cheat Set A/B/C | PaperGenius"
+  description="Generate authentic CBSE 2026 question papers with 1-click Set A, B, C shuffling, custom coaching institute watermark branding, step-wise marking schemes, and printable OMR sheets."
+/>
 
       {/* 1. HERO SECTION */}
       <section className="text-center max-w-4xl mx-auto space-y-6">

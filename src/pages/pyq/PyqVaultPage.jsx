@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { pyqDatabase } from '../../data/pyqData';
 import { previousYearsPapers, OFFICIAL_CBSE_PORTAL } from '../../data/downloadPapersData';
-
+import SEO from '../../components/common/SEO';
 
 export default function PyqVaultPage() {
   const [activeTab, setActiveTab] = useState('solved-bank'); // 'solved-bank' | 'full-papers'
@@ -57,7 +57,11 @@ export default function PyqVaultPage() {
 
   return (
     <div className="min-h-screen bg-[#050814] text-[#F3F4F6] pb-24 pt-8 px-4 sm:px-6 lg:px-8 selection:bg-[#7C3CFF] selection:text-white">
-      
+      <SEO 
+  title="5-Year Solved CBSE Board Papers (2022-2026) | Official Marking Schemes | PaperGenius"
+  description="Download 100% verified CBSE Class 10 and Class 12 solved previous year papers with step-by-step marking rubrics, high-frequency question badges, and official CBSE academic portal links."
+/>
+
       {/* Background Ambient Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[500px] overflow-hidden pointer-events-none -z-10">
         <div className="absolute top-[-80px] left-1/3 w-[550px] h-[550px] bg-[#7C3CFF]/15 blur-[150px] rounded-full" />

@@ -12,6 +12,8 @@ import HomeHeroVisualShowcase from '../../components/landing/HomeHeroVisualShowc
 import SubjectCatalog from '../../components/landing/SubjectCatalog';
 import CoachingDirectorProGrid from '../../components/landing/CoachingDirectorProGrid';
 import CbseInsights from '../../components/landing/CbseInsights';
+import SEO from '../../components/common/SEO';
+
 
 export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState(null);
@@ -53,6 +55,10 @@ export default function LandingPage() {
 
   return (
     <div className="space-y-20 pb-20 overflow-hidden">
+      <SEO 
+  title="PaperGenius | CBSE Board Exam OS & AI Question Paper Generator 2026"
+  description="India's #1 CBSE Board Exam OS. Instant AI question paper generator with Set A/B/C shuffling for coaching centers, 5-year authentic board PYQ bundles (2022-2026), and AI step-marking answer sheet evaluator."
+/>
 
       {/* 1. HERO SECTION */}
       <section className="relative pt-12 sm:pt-20 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
