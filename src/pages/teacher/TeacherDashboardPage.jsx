@@ -71,39 +71,17 @@ export default function TeacherDashboardPage() {
   const quotaRemaining = Math.max(0, quotaTotal - quotaUsed);
   const progressPercent = Math.min(100, Math.round((quotaUsed / (quotaTotal || 1)) * 100));
 
-  // Saved Papers History List
-  const [paperHistory] = useState([
-    {
-      id: 'paper-001',
-      title: 'Class 10 Science Pre-Board Assessment',
-      subject: 'Science',
-      grade: 'Class 10',
-      marks: 80,
-      duration: '3 Hours',
-      date: '24 Oct 2026',
-      sets: ['Set A', 'Set B', 'Set C']
-    },
-    {
-      id: 'paper-002',
-      title: 'Class 12 Physics Periodic Test - Optics & Modern Physics',
-      subject: 'Physics',
-      grade: 'Class 12',
-      marks: 40,
-      duration: '90 Minutes',
-      date: '22 Oct 2026',
-      sets: ['Set A', 'Set B']
-    },
-    {
-      id: 'paper-003',
-      title: 'Class 10 Mathematics Standard Unit Test',
-      subject: 'Mathematics',
-      grade: 'Class 10',
-      marks: 20,
-      duration: '45 Minutes',
-      date: '18 Oct 2026',
-      sets: ['Set A']
+    // Saved Papers History List (User-Specific Private Vault)
+  const storageKey = `pg_papers_${user?.id || user?.email || 'guest'}`;
+  const [paperHistory, setPaperHistory] = useState(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
     }
-  ]);
+  });
+
 
   return (
     <div className="min-h-screen bg-[#050814] text-[#F3F4F6] pb-24 pt-6 px-4 sm:px-6 lg:px-8 text-base">
