@@ -33,16 +33,39 @@ export default async function handler(req, res) {
     body = body || {};
 
     const { action, params, model } = body;
-
     const ai = new GoogleGenAI({ apiKey: apiKey });
-    
-    // Stable fast model
-    const targetModel = model || 'gemini-2.0-flash';
+    const targetModel = 'gemini-flash-latest';
 
     if (action === 'generateContent') {
+      let finalContents = params.contents;
+
+      // Ensure proper formatting if contents has image parts
+      if (Array.isArray(finalContents)) {
+        finalContents = finalContents.map(c => {
+          if (c.parts && Array.isArray(c.parts)) {
+            const cleanedParts = c.parts.map(p => {
+              if (p.inlineData && p.inlineData.data) {
+                // Strip data url prefix if present
+                const cleanBase64 = p.inlineData.data.replace(/^data:image\/[a-z]+;base64,/, '');
+                return {
+                  inlineData: {
+                    data: cleanBase64,
+                    mimeType: p.inlineData.mimeType || 'image/jpeg'
+                  }
+                };
+              }
+              return p;
+            });
+            return { ...c, parts: cleanedParts };
+          }
+          return c;
+        });
+      }
+
       const response = await ai.models.generateContent({
         model: targetModel,
-        ...params
+        ...params,
+        contents: finalContents
       });
 
       return res.status(200).json({ text: response.text });
