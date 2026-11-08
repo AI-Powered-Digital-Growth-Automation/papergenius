@@ -147,11 +147,11 @@ export const AuthProvider = ({ children }) => {
     setRole(null);
   };
 
-  const hasSubjectAccess = (subject) => {
-    if (!studentSubscription || !studentSubscription.subscribedSubjects) return false;
+    const hasSubjectAccess = (subject) => {
+    if (!studentSubscription) return false;
 
     const normalize = (name) => {
-      const lower = name.toLowerCase().trim();
+      const lower = (name || '').toLowerCase().trim();
       if (lower === 'social science' || lower === 'sst') return 'social_science';
       if (lower === 'science') return 'science';
       if (lower.includes('math')) return 'mathematics';
@@ -168,7 +168,26 @@ export const AuthProvider = ({ children }) => {
     };
 
     const targetKey = normalize(subject);
-    return studentSubscription.subscribedSubjects.some(sub => normalize(sub) === targetKey);
+
+    // 1. Paid Subscribers: Check specific subscribed subjects
+    if (studentSubscription.subscribedSubjects && studentSubscription.subscribedSubjects.length > 0) {
+      const hasPurchased = studentSubscription.subscribedSubjects.some(sub => normalize(sub) === targetKey);
+      if (hasPurchased) return true;
+    }
+
+    // 2. Free Trial Student: Unlock Core Subjects while trial quota (evaluationsRemaining > 0) exists
+    if (!studentSubscription.isPremium && (studentSubscription.evaluationsRemaining > 0)) {
+      const grade = studentSubscription.grade || 'Class 10';
+      if (grade === 'Class 10') {
+        // Unlock Science & Mathematics for Class 10 Free Trial
+        if (targetKey === 'science' || targetKey === 'mathematics') return true;
+      } else {
+        // Unlock Physics & Chemistry for Class 12 Free Trial
+        if (targetKey === 'physics' || targetKey === 'chemistry') return true;
+      }
+    }
+
+    return false;
   };
 
     // Consume Evaluation Quota (Secured via Database Atomic RPC)

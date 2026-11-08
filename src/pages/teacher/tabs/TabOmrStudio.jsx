@@ -14,7 +14,7 @@ export default function TabOmrStudio({ instituteName }) {
 
         <div className="flex items-center gap-2">
           <span className="text-xs sm:text-sm text-[#94A3B8] font-semibold">Bubble Count:</span>
-          {[20, 40, 80, 100].map((count) => (
+          {[20, 40, 60, 80, 100].map((count) => (
             <button
               key={count}
               onClick={() => setOmrQuestionsCount(count)}
