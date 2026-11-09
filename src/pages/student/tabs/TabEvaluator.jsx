@@ -1,6 +1,11 @@
 ﻿import React, { useState, useRef } from 'react';
-import { Camera, Upload, RefreshCw, Zap, AlertCircle, FileText, Award, CheckCircle2, BookmarkCheck, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { 
+  Camera, Upload, RefreshCw, Zap, AlertCircle, FileText, 
+  Award, CheckCircle2, BookmarkCheck, Star, X, ExternalLink, Sparkles 
+} from 'lucide-react';
 import { evaluateAnswerSheet } from '../../../services/geminiService';
+import { PAYMENT_LINKS } from '../../../config/paymentConfig';
 
 export default function TabEvaluator({
   selectedGrade,
@@ -20,6 +25,8 @@ export default function TabEvaluator({
   const [evaluation, setEvaluation] = useState(null);
   const [showTopperComparison, setShowTopperComparison] = useState(false);
   const fileInputRef = useRef(null);
+  const [showPaywallModal, setShowPaywallModal] = useState(false);
+
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -38,38 +45,71 @@ export default function TabEvaluator({
     reader.readAsDataURL(file);
   };
 
-  const handleRunEvaluation = async () => {
+    const handleRunEvaluation = async () => {
     if (!isUnlocked) {
       setEvalError(`Aapke pass mein ${selectedSubject} shamil nahi hai. Subscribed: ${subscribedSubjects.join(', ')}`);
       return;
     }
-    if (evaluationsRemaining <= 0) {
-      setEvalError('Aapka monthly checking quota khatam ho chuka hai. Kripya pass renew karein.');
+        if (evaluationsRemaining <= 0) {
+      setShowPaywallModal(true);
       return;
     }
+
     if (!imageBase64) {
       setEvalError('Kripya pehle handwritten answer ki photo upload karein.');
       return;
     }
+
     setLoading(true);
     setEvalError(null);
+
     try {
-      const result = await evaluateAnswerSheet({
+      const rawResult = await evaluateAnswerSheet({
         imageBase64,
         mimeType: imageMimeType,
         grade: selectedGrade,
         subject: selectedSubject,
-        questionText: evalQuestion,
+        questionContext: evalQuestion,
         maxMarks: Number(evalMarks)
       });
-      setEvaluation(result);
-      consumeEvaluationQuota();
+
+      if (!rawResult) {
+        throw new Error('AI Engine did not return a valid scorecard. Please retry.');
+      }
+
+      // Safe Normalizer: Map API fields to UI component fields
+      const normalized = {
+        overallVerdict: rawResult.overallVerdict || rawResult.presentationRating || 'CBSE Evaluation Completed',
+        totalMarksAwarded: typeof rawResult.totalMarksAwarded === 'number' 
+          ? rawResult.totalMarksAwarded 
+          : (rawResult.marksAwarded ?? evalMarks),
+        maxMarks: rawResult.maxMarks || evalMarks,
+        transcribedText: rawResult.transcribedText || '',
+        stepBreakdown: (rawResult.stepBreakdown || []).map(st => ({
+          stepTitle: st.stepTitle || st.step || 'Step Evaluation',
+          marksAwarded: st.marksAwarded ?? (typeof st.marks === 'string' ? st.marks.split('/')[0] : 1),
+          maxMarksForStep: st.maxMarksForStep ?? (typeof st.marks === 'string' ? st.marks.split('/')[1] : 1),
+          feedback: st.feedback || st.status || 'Verified against rubric'
+        })),
+        deductionsAndMistakes: rawResult.deductionsAndMistakes || rawResult.deductions || [],
+        modelAnswer: rawResult.modelAnswer || 'Refer to NCERT model answer.',
+        topperSecretsCheck: rawResult.topperSecretsCheck || {}
+      };
+
+      setEvaluation(normalized);
+
+      // Consume Quota ONLY after successful evaluation
+      if (consumeEvaluationQuota) {
+        await consumeEvaluationQuota();
+      }
     } catch (err) {
+      console.error('Evaluation Error:', err);
       setEvalError(err.message || 'Evaluation me dikkat aayi. Clear photo upload karein.');
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -244,6 +284,66 @@ export default function TabEvaluator({
           </div>
         )}
       </div>
-    </div>
+
+            {/* 0-QUOTA STUDENT PAYWALL LOCK MODAL */}
+      {showPaywallModal && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="relative w-full max-w-md rounded-3xl bg-[#0B132B] border border-cyan-500/40 shadow-2xl p-6 sm:p-8 space-y-6 text-center animate-in fade-in zoom-in duration-200">
+            {/* Close Button */}
+            <button
+              onClick={() => setShowPaywallModal(false)}
+              className="absolute top-5 right-5 p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Header Icon & Title */}
+            <div className="space-y-2">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#7C3CFF] to-[#06B6D4] flex items-center justify-center mx-auto shadow-xl shadow-[#7C3CFF]/30">
+                <Sparkles className="w-7 h-7 text-white" />
+              </div>
+              <span className="px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-[11px] font-mono font-bold text-cyan-300 inline-block uppercase">
+                Free Trial Credits Exhausted (0/2)
+              </span>
+              <h3 className="text-xl sm:text-2xl font-black text-white">
+                Unlock 100/100 CBSE Board Pass
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-sm mx-auto">
+                You've used your 2 free AI answer sheet evaluations. Upgrade to continue checking unlimited handwritten answers with official step-marking rubrics.
+              </p>
+            </div>
+
+            {/* Price Box */}
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-center space-y-1">
+              <span className="text-xs text-slate-400 font-mono">Instant Unlimited Access</span>
+              <div className="text-3xl font-black text-white">
+                {selectedGrade === 'Class 12' ? '₹499' : '₹199'}
+                <span className="text-xs font-semibold text-emerald-400 ml-2">Full 2026 Session</span>
+              </div>
+              <p className="text-[11px] text-slate-400 font-mono">All Core Subjects • Model Answers • Deduction Alerts</p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-2.5 pt-1">
+              <Link
+                to="/pricing"
+                onClick={() => setShowPaywallModal(false)}
+                className="w-full btn-gradient py-3.5 rounded-xl font-bold text-white text-sm shadow-xl flex items-center justify-center gap-2 hover:opacity-95 transition-all block text-center"
+              >
+                <span>Upgrade Board Pass ({selectedGrade === 'Class 12' ? '₹499' : '₹199'})</span>
+                <ExternalLink className="w-4 h-4" />
+              </Link>
+              <button
+                type="button"
+                onClick={() => setShowPaywallModal(false)}
+                className="w-full py-2.5 text-xs text-slate-400 hover:text-white font-mono"
+              >
+                Continue Browsing Solved PYQ Vault Free
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      </div>
   );
 }
