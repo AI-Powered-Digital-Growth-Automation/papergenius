@@ -1,15 +1,19 @@
-﻿import React, { useState } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { 
-  Sparkles, Mail, Lock, User, Phone, Building2, 
+﻿import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation, useSearchParams, Link } from 'react-router-dom';
+import {
+  Sparkles, Mail, Lock, User, Phone, Building2,
   ArrowRight, ShieldCheck, CheckCircle2, AlertCircle, Eye, EyeOff
 } from 'lucide-react';
 import { supabase } from '../../services/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 
 export default function AuthPage() {
-  const [isLogin, setIsLogin] = useState(false); // Default to Sign Up for new users
-  const [role, setRole] = useState('student'); // 'student' | 'teacher'
+  const [searchParams] = useSearchParams();
+  const initialMode = searchParams.get('mode') === 'login';
+  const initialRole = searchParams.get('role') === 'teacher' ? 'teacher' : 'student';
+
+  const [isLogin, setIsLogin] = useState(initialMode);
+  const [role, setRole] = useState(initialRole);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -26,6 +30,20 @@ export default function AuthPage() {
   const location = useLocation();
   const { setRole: setGlobalRole } = useAuth();
 
+  // URL query params change hone par mode update karein
+  useEffect(() => {
+    const mode = searchParams.get('mode');
+    const roleParam = searchParams.get('role');
+    if (mode === 'login') {
+      setIsLogin(true);
+    } else if (mode === 'register') {
+      setIsLogin(false);
+    }
+    if (roleParam === 'teacher' || roleParam === 'student') {
+      setRole(roleParam);
+    }
+  }, [searchParams]);
+
   const handleAuth = async (e) => {
     e.preventDefault();
     setError(null);
@@ -38,139 +56,143 @@ export default function AuthPage() {
         setError('Kripya valid 10-digit mobile/WhatsApp number enter karein. Bina mobile number ke registration possible nahi hai.');
         return;
       }
-      if (!email || !email.includes('@')) {
-        setError('Kripya valid email address enter karein.');
-        return;
-      }
-      if (password.length < 6) {
-        setError('Password kam se kam 6 characters ka hona chahiye.');
-        return;
-      }
     }
 
     setLoading(true);
 
     try {
       if (isLogin) {
-        // Sign In
-        const { data, error: signInError } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
+        // Sign In Flow
+        const { data, error: signInErr } = await supabase.auth.signInWithPassword({
+          email: email.trim().toLowerCase(),
           password
         });
-        if (signInError) throw signInError;
+        if (signInErr) throw signInErr;
 
-        const userRole = data?.user?.user_metadata?.role || role;
-        setGlobalRole(userRole);
-        navigate(userRole === 'teacher' ? '/teacher/dashboard' : '/student', { replace: true });
+        const userRole = data.user?.user_metadata?.role || 'student';
+        if (setGlobalRole) setGlobalRole(userRole);
+
+        if (userRole === 'teacher') {
+          navigate('/teacher/dashboard');
+        } else {
+          navigate('/student');
+        }
       } else {
-        // Strict Sign Up with Mandatory Phone & Metadata
-        const { data, error: signUpError } = await supabase.auth.signUp({
-          email: email.trim(),
+        // Sign Up Flow
+        const cleanPhone = phone.replace(/[^0-9]/g, '');
+        const { data, error: signUpErr } = await supabase.auth.signUp({
+          email: email.trim().toLowerCase(),
           password,
           options: {
             data: {
-              full_name: name.trim(),
-              phone_number: phone.trim(),
+              full_name: name,
+              phone: cleanPhone,
               role: role,
-              institute_name: role === 'teacher' ? instituteName.trim() : null,
-              grade: role === 'student' ? grade : null,
-              is_premium: false,
-              registered_at: new Date().toISOString()
+              institute_name: role === 'teacher' ? instituteName : null,
+              grade: role === 'student' ? grade : null
             }
           }
         });
-        if (signUpError) throw signUpError;
 
-        setGlobalRole(role);
-        setSuccessMsg('Account safaltapoorvak ban gaya hai! Redirecting to your dashboard...');
-        setTimeout(() => {
-          navigate(role === 'teacher' ? '/teacher/dashboard' : '/student', { replace: true });
-        }, 1500);
+        if (signUpErr) throw signUpErr;
+
+        // Auto-create initial user_quota record if session created
+        if (data?.user) {
+          await supabase.from('user_quotas').upsert({
+            user_id: data.user.id,
+            email: email.trim().toLowerCase(),
+            role: role,
+            plan_name: role === 'teacher' ? 'Starter Free Trial' : 'Free Trial Student',
+            is_premium: false,
+            quota_remaining: 2,
+            quota_max: 2,
+            subscribed_subjects: role === 'student' ? ['Science', 'Mathematics Standard'] : ['General Syllabus']
+          }, { onConflict: 'email' }).catch(err => console.warn('Auto quota record init notice:', err));
+        }
+
+        setSuccessMsg('Registration successful! Please check your email to confirm your account, or sign in.');
+        setIsLogin(true);
       }
     } catch (err) {
-      console.error(err);
-      setError(err.message || 'Authentication error. Kripya details check karein.');
+      setError(err.message || 'Authentication error. Please retry.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md p-8 sm:p-9 rounded-3xl bg-[#080D24] border border-[rgba(140,120,255,0.3)] shadow-2xl space-y-6">
+    <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-6 bg-[#080D24] p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
         
+        {/* Glow */}
+        <div className="absolute top-0 right-0 w-40 h-40 bg-[#7C3CFF]/15 rounded-full blur-3xl pointer-events-none" />
+
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#7C3CFF]/20 border border-[#7C3CFF]/40 text-xs font-mono font-bold text-[#C4B5FD]">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#7C3CFF]/15 border border-[#7C3CFF]/30 text-[#C4B5FD] text-xs font-mono font-bold">
             <Sparkles className="w-3.5 h-3.5" />
             <span>PaperGenius Official Access</span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-black text-white">
-            {isLogin ? 'Welcome Back!' : 'Create Your Account'}
-          </h1>
+          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            {isLogin ? 'Welcome Back' : 'Create Your Account'}
+          </h2>
           <p className="text-xs sm:text-sm text-[#94A3B8]">
-            {isLogin 
-              ? 'Enter your credentials to access your portal' 
+            {isLogin
+              ? 'Enter your registered credentials to access your dashboard'
               : 'Both Email & Mobile required for Free Plan activation'}
           </p>
         </div>
 
-        {/* Role Toggle for Sign Up */}
+        {/* Role Switcher (Sign Up only) */}
         {!isLogin && (
-          <div className="flex bg-[#0C1330] p-1.5 rounded-2xl border border-white/10 text-xs sm:text-sm font-bold">
+          <div className="flex p-1 rounded-xl bg-[#0C1330] border border-white/10">
             <button
               type="button"
               onClick={() => setRole('student')}
-              className={`flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
                 role === 'student'
-                  ? 'bg-gradient-to-r from-[#7C3CFF] to-[#06B6D4] text-white shadow-md'
+                  ? 'bg-gradient-to-r from-[#7C3CFF] to-[#06B6D4] text-white shadow'
                   : 'text-[#94A3B8] hover:text-white'
               }`}
             >
-              <User className="w-4 h-4" />
+              <User className="w-3.5 h-3.5" />
               <span>Student (Free)</span>
             </button>
-
             <button
               type="button"
               onClick={() => setRole('teacher')}
-              className={`flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
                 role === 'teacher'
-                  ? 'bg-gradient-to-r from-[#7C3CFF] to-[#06B6D4] text-white shadow-md'
+                  ? 'bg-gradient-to-r from-[#7C3CFF] to-[#06B6D4] text-white shadow'
                   : 'text-[#94A3B8] hover:text-white'
               }`}
             >
-              <Building2 className="w-4 h-4" />
+              <Building2 className="w-3.5 h-3.5" />
               <span>Coaching / Tutor</span>
             </button>
           </div>
         )}
 
-        {/* Error / Success Alerts */}
+        {/* Error / Success Notifications */}
         {error && (
-          <div className="p-3.5 rounded-xl bg-red-950/40 border border-red-500/30 text-xs text-red-200 flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-400" />
+          <div className="p-3.5 rounded-xl bg-red-950/60 border border-red-500/40 text-red-300 text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
-
         {successMsg && (
-          <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-200 flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+          <div className="p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-xs flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
             <span>{successMsg}</span>
           </div>
         )}
 
-        {/* Auth Form */}
+        {/* Form */}
         <form onSubmit={handleAuth} className="space-y-4 text-xs sm:text-sm">
-          
-          {/* Full Name (Sign Up only) */}
           {!isLogin && (
             <div>
-              <label className="text-[#CBD5E1] block mb-1 font-semibold">
-                Full Name <span className="text-red-400">*</span>
-              </label>
+              <label className="text-[#94A3B8] block mb-1 font-semibold">Full Name *</label>
               <div className="relative">
                 <User className="w-4 h-4 text-[#94A3B8] absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
@@ -179,17 +201,14 @@ export default function AuthPage() {
                   placeholder="e.g. Rahul Sharma"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-[#0C1330] border border-white/10 text-white rounded-xl pl-10 pr-3.5 py-3 placeholder-slate-500 focus:outline-none focus:border-[#06B6D4]"
+                  className="w-full bg-[#0C1330] border border-white/10 rounded-xl pl-10 pr-3.5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-[#7C3CFF]"
                 />
               </div>
             </div>
           )}
 
-          {/* Email Address (MANDATORY) */}
           <div>
-            <label className="text-[#CBD5E1] block mb-1 font-semibold">
-              Email Address <span className="text-red-400">*</span>
-            </label>
+            <label className="text-[#94A3B8] block mb-1 font-semibold">Email Address *</label>
             <div className="relative">
               <Mail className="w-4 h-4 text-[#94A3B8] absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
@@ -198,44 +217,39 @@ export default function AuthPage() {
                 placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[#0C1330] border border-white/10 text-white rounded-xl pl-10 pr-3.5 py-3 placeholder-slate-500 focus:outline-none focus:border-[#06B6D4]"
+                className="w-full bg-[#0C1330] border border-white/10 rounded-xl pl-10 pr-3.5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-[#7C3CFF]"
               />
             </div>
           </div>
 
-          {/* Mobile / WhatsApp Number (STRICTLY MANDATORY FOR SIGN UP) */}
           {!isLogin && (
             <div>
-              <label className="text-[#CBD5E1] block mb-1 font-semibold flex items-center justify-between">
-                <span>Mobile / WhatsApp Number <span className="text-red-400">*</span></span>
-                <span className="text-[11px] text-[#67E8F9] font-mono">Required for Free Access</span>
-              </label>
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-[#94A3B8] font-semibold">Mobile / WhatsApp Number *</label>
+                <span className="text-[10px] text-[#06B6D4] font-mono">Required for Free Access</span>
+              </div>
               <div className="relative">
-                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[#94A3B8] font-mono text-xs">
-                  <Phone className="w-4 h-4" />
-                  <span>+91</span>
-                </div>
+                <span className="text-slate-400 text-xs absolute left-3.5 top-1/2 -translate-y-1/2 font-mono">+91</span>
                 <input
                   type="tel"
                   required
                   maxLength={10}
-                  placeholder="9876543210"
+                  placeholder="10-digit mobile number"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full bg-[#0C1330] border border-white/10 text-white rounded-xl pl-16 pr-3.5 py-3 font-mono placeholder-slate-500 focus:outline-none focus:border-[#06B6D4]"
+                  onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ''))}
+                  className="w-full bg-[#0C1330] border border-white/10 rounded-xl pl-12 pr-3.5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-[#7C3CFF] font-mono"
                 />
               </div>
             </div>
           )}
 
-          {/* Role-Specific Fields (Sign Up only) */}
           {!isLogin && role === 'student' && (
             <div>
-              <label className="text-[#CBD5E1] block mb-1 font-semibold">Your Class / Target Board</label>
+              <label className="text-[#94A3B8] block mb-1 font-semibold">Your Class / Target Board</label>
               <select
                 value={grade}
                 onChange={(e) => setGrade(e.target.value)}
-                className="w-full bg-[#0C1330] border border-white/10 text-white rounded-xl p-3 focus:outline-none focus:border-[#06B6D4]"
+                className="w-full bg-[#0C1330] border border-white/10 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#7C3CFF]"
               >
                 <option value="Class 10">Class 10 Board Exam 2026</option>
                 <option value="Class 12">Class 12 Board Exam 2026</option>
@@ -245,40 +259,38 @@ export default function AuthPage() {
 
           {!isLogin && role === 'teacher' && (
             <div>
-              <label className="text-[#CBD5E1] block mb-1 font-semibold">Institute / Coaching Name</label>
+              <label className="text-[#94A3B8] block mb-1 font-semibold">Coaching / Academy Name *</label>
               <div className="relative">
                 <Building2 className="w-4 h-4 text-[#94A3B8] absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Apex Science Academy"
+                  placeholder="e.g. Apex Science Institute"
                   value={instituteName}
                   onChange={(e) => setInstituteName(e.target.value)}
-                  className="w-full bg-[#0C1330] border border-white/10 text-white rounded-xl pl-10 pr-3.5 py-3 placeholder-slate-500 focus:outline-none focus:border-[#7C3CFF]"
+                  className="w-full bg-[#0C1330] border border-white/10 rounded-xl pl-10 pr-3.5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-[#7C3CFF]"
                 />
               </div>
             </div>
           )}
 
-          {/* Password */}
           <div>
-            <label className="text-[#CBD5E1] block mb-1 font-semibold">
-              Password <span className="text-red-400">*</span>
-            </label>
+            <label className="text-[#94A3B8] block mb-1 font-semibold">Password *</label>
             <div className="relative">
               <Lock className="w-4 h-4 text-[#94A3B8] absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type={showPassword ? 'text' : 'password'}
                 required
-                placeholder="At least 6 characters"
+                minLength={6}
+                placeholder="••••••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-[#0C1330] border border-white/10 text-white rounded-xl pl-10 pr-10 py-3 placeholder-slate-500 focus:outline-none focus:border-[#06B6D4]"
+                className="w-full bg-[#0C1330] border border-white/10 rounded-xl pl-10 pr-10 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-[#7C3CFF]"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-white"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -288,43 +300,37 @@ export default function AuthPage() {
           <button
             type="submit"
             disabled={loading}
-            className="btn-gradient w-full py-3.5 rounded-xl font-bold text-white text-sm shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 mt-2 cursor-pointer"
+            className="w-full btn-gradient py-3 rounded-xl font-bold text-white text-sm shadow-xl flex items-center justify-center gap-2 hover:opacity-95 disabled:opacity-50 transition-all mt-2"
           >
-            {loading ? (
-              <span>Verifying Credentials...</span>
-            ) : (
-              <>
-                <span>{isLogin ? 'Sign In to Portal' : 'Register & Unlock Free Access'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </>
-            )}
+            <span>{loading ? 'Processing...' : isLogin ? 'Sign In to Dashboard' : 'Register & Unlock Free Access'}</span>
+            <ArrowRight className="w-4 h-4" />
           </button>
         </form>
 
-        {/* Switch Login / Sign Up */}
-        <div className="pt-2 text-center text-xs text-[#94A3B8] border-t border-white/10">
+        {/* Toggle Mode */}
+        <div className="pt-2 text-center text-xs text-[#94A3B8]">
           {isLogin ? (
-            <div>
-              New to PaperGenius?{' '}
+            <span>
+              Don't have an account?{' '}
               <button
                 type="button"
                 onClick={() => setIsLogin(false)}
-                className="font-bold text-[#67E8F9] hover:underline cursor-pointer"
+                className="text-[#67E8F9] font-bold hover:underline"
               >
-                Create Account (Free 5-Yr Papers)
+                Create Account (Free)
               </button>
-            </div>
+            </span>
           ) : (
-            <div>
+            <span>
               Already have an account?{' '}
               <button
                 type="button"
                 onClick={() => setIsLogin(true)}
-                className="font-bold text-[#67E8F9] hover:underline cursor-pointer"
+                className="text-[#67E8F9] font-bold hover:underline"
               >
                 Sign In Here
               </button>
-            </div>
+            </span>
           )}
         </div>
 
