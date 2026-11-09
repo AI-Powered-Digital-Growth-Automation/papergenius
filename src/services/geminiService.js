@@ -4,32 +4,31 @@
  */
 async function callGeminiSecure(params, maxRetries = 2) {
   let attempt = 0;
-  // Endpoints to check: Netlify first, then Vercel
-  const endpoints = ['/.netlify/functions/gemini', '/api/gemini'];
 
   while (attempt <= maxRetries) {
-    for (const endpoint of endpoints) {
-      try {
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'generateContent', params })
-        });
+    try {
+      const res = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'generateContent', params })
+      });
 
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.text) {
-            return data.text;
-          }
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.text) {
+          return data.text;
         }
-      } catch (netErr) {
-        // Try next endpoint or retry loop
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        console.warn('API Endpoint returned error:', errData);
       }
+    } catch (netErr) {
+      console.warn('Fetch attempt error:', netErr);
     }
 
     attempt++;
     if (attempt <= maxRetries) {
-      await new Promise(r => setTimeout(r, 1200 * attempt));
+      await new Promise(r => setTimeout(r, 1000 * attempt));
     }
   }
 
