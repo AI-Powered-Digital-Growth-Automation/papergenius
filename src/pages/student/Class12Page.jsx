@@ -52,13 +52,46 @@ export default function Class12Page() {
       link: '/student?tab=pyq&subject=Economics'
     }
   ];
+  const class12FaqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do head examiners evaluate 5-mark Physics derivations like AC Generator and Prism Formula?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A 5-mark derivation is strictly split into: 1 mark for a properly labeled neat diagram (with arrows), 1 mark for core principle, 2.5 marks for intermediate algebraic steps without skipping logic, and 0.5 mark for the final boxed formula with standard SI units."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are mechanisms mandatory for all 32 Organic Chemistry named reactions in Class 12?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. CBSE only tests mechanisms for specific syllabus-marked reactions: Hydration of ethene, Dehydration of ethanol, and Nucleophilic addition to aldehydes/ketones. For all other named reactions, balanced equations with reagents suffice."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "In Class 12 Calculus, if the integration constant (+C) is forgotten, how many marks are lost?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Omitting the arbitrary integration constant (+C) in indefinite integrals results in a mandatory 0.5-mark deduction by the examiner, even if the integrand substitution is accurate."
+        }
+      }
+    ]
+  };
+
 
   return (
     <div className="space-y-20 py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <SEO 
+            <SEO
         title="CBSE Class 12 Board Exam Hub 2026 | Physics Derivations & AI Evaluator"
         description="Master CBSE Class 12 Physics derivations, Chemistry named reactions, Maths calculus PYQs (2022-2026), and evaluate handwritten answer sheets with AI step-marking."
+        schema={class12FaqSchema}
       />
+
       {/* 1. HERO SECTION */}
       <section className="text-center max-w-4xl mx-auto space-y-6">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#7C3CFF]/15 border border-[#7C3CFF]/30 text-[#A78BFA] text-xs sm:text-sm font-mono font-bold uppercase tracking-wider">

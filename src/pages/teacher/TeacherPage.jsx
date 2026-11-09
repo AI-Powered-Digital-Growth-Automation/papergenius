@@ -40,13 +40,46 @@ export default function TeacherPage() {
       link: '/pricing'
     }
   ];
+  const coachingFaqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does PaperGenius generate CBSE-standard question papers in under 10 seconds?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Our engine pairs official CBSE curriculum blueprints with Google Gemini Flash AI to generate strictly balanced papers conforming to NEP 50% competency guidelines, including MCQs, Assertion-Reasoning, and Section E case studies."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does Set A, B, and C anti-cheating shuffling work in high-density coaching rooms?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "PaperGenius generates three parallel sets where MCQs and question sequences are scrambled while keeping identical difficulty parity and marks allocation, preventing adjacent students from copying."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can coaching institutes print their own brand logo, address, and anti-copy watermark?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Institute name, branch subtitle, director name, and contact phone appear on the header, and a 30-degree diagonal anti-photocopy watermark is stamped across the background."
+        }
+      }
+    ]
+  };
+
 
   return (
     <div className="space-y-20 py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <SEO 
-  title="Coaching OS & AI Question Paper Studio | Anti-Cheat Set A/B/C | PaperGenius"
-  description="Generate authentic CBSE 2026 question papers with 1-click Set A, B, C shuffling, custom coaching institute watermark branding, step-wise marking schemes, and printable OMR sheets."
-/>
+        <SEO
+        title="Coaching OS & AI Question Paper Studio | Anti-Cheat Set A/B/C | PaperGenius"
+        description="Generate authentic CBSE 2026 question papers with 1-click Set A, B, C shuffling, custom coaching institute watermark branding, step-wise marking schemes, and printable OMR sheets."
+        schema={coachingFaqSchema}
+      />
+
 
       {/* 1. HERO SECTION */}
       <section className="text-center max-w-4xl mx-auto space-y-6">

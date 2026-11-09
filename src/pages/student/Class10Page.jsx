@@ -38,13 +38,54 @@ export default function Class10Page() {
       link: '/student?tab=pyq&subject=English'
     }
   ];
+  const class10FaqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How are marks deducted for chemical reactions and ray diagrams in Class 10 Science?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "CBSE head-examiner guidelines mandate that all chemical equations must be balanced, and reaction conditions must be written above the arrow. In Physics, ray diagrams must have arrowheads showing the path of light; omission results in an immediate 0.5-mark penalty."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the exact difference in difficulty between Mathematics Standard (041) and Basic (241)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Mathematics Basic questions directly mirror standard NCERT textbook examples. Mathematics Standard requires deeper conceptual application, including NCERT Exemplar problems, HOTS questions, and Section E multi-step case studies."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "If my final numerical calculation in Maths is wrong, do I lose all 5 marks?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. CBSE evaluates on strict step-marking. Stating the formula awards 0.5 to 1 mark; correct step substitutions earn intermediate marks. You only forfeit the final 0.5 to 1 mark for the arithmetic error."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How should long answers (3-mark and 5-mark) be structured in Class 10 SST?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Always write answers in distinct numbered bullet points with bold sub-headings. For a 3-mark question, provide exactly 3 well-explained points; for a 5-mark question, provide 5 analytical points with key terms and dates."
+        }
+      }
+    ]
+  };
+
 
   return (
     <div className="space-y-20 py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <SEO 
+        <SEO
         title="CBSE Class 10 Board Exam OS 2026 | Solved PYQ & AI Evaluator"
         description="Download CBSE Class 10 Science, Maths, Social Science solved previous year papers (2022-2026) and evaluate handwritten answer sheets with AI step-marking."
+        schema={class10FaqSchema}
       />
+
       {/* 1. HERO SECTION */}
       <section className="text-center max-w-4xl mx-auto space-y-6">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#06B6D4]/15 border border-[#06B6D4]/30 text-[#06B6D4] text-xs sm:text-sm font-mono font-bold uppercase tracking-wider">
