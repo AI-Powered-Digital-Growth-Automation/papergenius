@@ -8,6 +8,15 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://papergenius.in',
+        changeOrigin: true,
+        secure: true,
+      }
+    }
+  },
   build: {
     chunkSizeWarningLimit: 800,
     rollupOptions: {

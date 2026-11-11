@@ -1,8 +1,9 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../../services/supabaseClient';
 import { 
   ShieldAlert, Users, BookOpen, BarChart3, PlusCircle, 
-  CheckCircle2, XCircle, Search, Trash2, Check,
+  CheckCircle2, XCircle, Search, Trash2,
+  Edit3, Check,
   CreditCard, Clock, Building2, User, RefreshCw
 } from 'lucide-react';
 import { initialBlogPosts } from '../../data/blogData';
@@ -14,6 +15,7 @@ export default function AdminDashboardPage() {
   
   // Blog CMS state
   const [blogs, setBlogs] = useState(initialBlogPosts);
+  const [editingBlogId, setEditingBlogId] = useState(null);
   const [showAddBlogModal, setShowAddBlogModal] = useState(false);
   const [newBlog, setNewBlog] = useState({
     title: '',
@@ -21,6 +23,7 @@ export default function AdminDashboardPage() {
     category: 'Class 10',
     excerpt: '',
     content: '',
+    image: '',
     tags: 'Class 10, CBSE 2026'
   });
 
@@ -244,6 +247,41 @@ export default function AdminDashboardPage() {
     }
   };
 
+    // Device Image File Upload Handler
+  const handleImageFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Image size should be less than 2MB');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setNewBlog(prev => ({ ...prev, image: reader.result }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const resetBlogForm = () => {
+    setNewBlog({ title: '', slug: '', category: 'Class 10', excerpt: '', content: '', image: '', tags: 'Class 10, CBSE 2026' });
+    setEditingBlogId(null);
+    setShowAddBlogModal(false);
+  };
+
+  const handleStartEditBlog = (blog) => {
+    setEditingBlogId(blog.id || blog.slug);
+    setNewBlog({
+      title: blog.title || '',
+      slug: blog.slug || '',
+      category: blog.category || 'Class 10',
+      excerpt: blog.excerpt || '',
+      content: blog.content || '',
+      image: blog.image || blog.image_url || '',
+      tags: Array.isArray(blog.tags) ? blog.tags.join(', ') : (blog.tags || 'Class 10, CBSE 2026')
+    });
+    setShowAddBlogModal(true);
+  };
+
   // Persistent Blog CMS Add
   const handleCreateBlog = async (e) => {
     e.preventDefault();
@@ -271,7 +309,8 @@ export default function AdminDashboardPage() {
     };
     setBlogs([createdLocal, ...blogs]);
     setShowAddBlogModal(false);
-    setNewBlog({ title: '', slug: '', category: 'Class 10', excerpt: '', content: '', tags: 'Class 10, CBSE 2026' });
+    setNewBlog({ title: '', slug: '', category: 'Class 10', excerpt: '', content: '',
+    image: '', tags: 'Class 10, CBSE 2026' });
 
     try {
       const { error } = await supabase.from('blogs').upsert([newRecord], { onConflict: 'slug' });
@@ -307,6 +346,17 @@ export default function AdminDashboardPage() {
     return matchRole && matchSearch;
   });
 
+    // Dynamic Real Analytics Calculations
+  const totalApprovedRevenue = paymentsList
+    .filter(p => p.status === 'approved')
+    .reduce((sum, p) => {
+      const num = parseInt((p.amount || '').replace(/[^0-9]/g, ''), 10) || 0;
+      return sum + num;
+    }, 0);
+
+  const paidCoachingCount = usersList.filter(u => u.role === 'teacher' && u.status === 'Active').length;
+  const paidStudentCount = usersList.filter(u => u.role === 'student' && u.status === 'Active').length;
+  const totalQuotasIssued = usersList.reduce((acc, u) => acc + (u.quotaMax || 0), 0);
   const pendingPaymentsCount = paymentsList.filter(p => p.status === 'pending').length;
 
   return (
@@ -315,7 +365,14 @@ export default function AdminDashboardPage() {
       {/* 1. TOP ADMIN BANNER */}
       <div className="max-w-7xl mx-auto mb-6 p-6 sm:p-7 rounded-2xl bg-gradient-to-r from-[#080D24] via-[#120D3D] to-[#080D24] border border-purple-500/40 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleStartEditBlog(b)}
+                      className="p-2 rounded-lg bg-[#7C3CFF]/20 hover:bg-[#7C3CFF]/40 text-[#C4B5FD] border border-[#7C3CFF]/30 transition-colors"
+                      title="Edit Article"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </button>
             <span className="px-3 py-1 rounded-full bg-purple-950/60 border border-purple-500/40 text-xs font-mono font-bold text-[#C4B5FD] flex items-center gap-1.5">
               <ShieldAlert className="w-3.5 h-3.5 text-yellow-400" />
               <span>Founder & Master Admin Portal</span>
@@ -670,7 +727,49 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
 
-                  <div>
+                                  {/* Featured Banner Image Upload Field */}
+                <div>
+                  <label className="text-[#94A3B8] block mb-1 font-semibold text-xs">Featured Banner Image</label>
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                    <label className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold cursor-pointer flex items-center justify-center gap-2 transition-all shadow-md shrink-0">
+                      <span>📁 Choose Image File</span>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={handleImageFileUpload} 
+                        className="hidden" 
+                      />
+                    </label>
+                    <input
+                      type="url"
+                      placeholder="Or paste image URL (https://...)"
+                      value={newBlog.image || ''}
+                      onChange={(e) => setNewBlog({ ...newBlog, image: e.target.value })}
+                      className="flex-1 bg-[#0C1330] border border-white/10 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-[#7C3CFF]"
+                    />
+                  </div>
+                  {newBlog.image && (
+                    <div className="mt-2.5 flex items-center gap-3 p-2.5 bg-[#0C1330] rounded-xl border border-white/10">
+                      <img 
+                        src={newBlog.image} 
+                        alt="Banner Preview" 
+                        className="w-20 h-12 object-cover rounded-lg border border-white/20 shadow"
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
+                      <div className="flex-1 text-left">
+                        <span className="text-xs text-emerald-400 font-semibold block">✓ Banner Image Selected</span>
+                        <button 
+                          type="button" 
+                          onClick={() => setNewBlog({ ...newBlog, image: '' })}
+                          className="text-[11px] text-red-400 hover:underline mt-0.5"
+                        >
+                          Remove Image
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+<div>
                     <label className="text-[#94A3B8] block mb-1">Short Excerpt (Meta Description)</label>
                     <textarea
                       rows={2}
@@ -715,7 +814,14 @@ export default function AdminDashboardPage() {
                     <p className="text-xs text-[#94A3B8] font-mono">/blog/{b.slug}</p>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleStartEditBlog(b)}
+                      className="p-2 rounded-lg bg-[#7C3CFF]/20 hover:bg-[#7C3CFF]/40 text-[#C4B5FD] border border-[#7C3CFF]/30 transition-colors"
+                      title="Edit Article"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </button>
                     <button
                       onClick={() => handleDeleteBlog(b.id)}
                       className="p-2 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-500/30"
@@ -733,29 +839,44 @@ export default function AdminDashboardPage() {
 
         {/* ================= TAB 4: REVENUE & ANALYTICS ================= */}
         {activeTab === 'analytics' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="p-6 rounded-2xl bg-[#080D24] border border-white/10 space-y-2">
-              <span className="text-xs text-[#94A3B8] uppercase font-bold tracking-wider">Estimated MRR</span>
-              <div className="text-3xl font-black text-white">₹14,290</div>
-              <p className="text-xs text-emerald-400 font-semibold">+28% growth this month</p>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              <div className="p-6 rounded-2xl bg-[#080D24] border border-white/10 space-y-2">
+                <span className="text-xs text-[#94A3B8] uppercase font-bold tracking-wider">Total Approved Revenue</span>
+                <div className="text-3xl font-black text-emerald-400">?{totalApprovedRevenue.toLocaleString('en-IN')}</div>
+                <p className="text-xs text-[#94A3B8]">Verified PhonePe / UPI UTR credits</p>
+              </div>
+
+              <div className="p-6 rounded-2xl bg-[#080D24] border border-white/10 space-y-2">
+                <span className="text-xs text-[#94A3B8] uppercase font-bold tracking-wider">Paid Coaching Centers</span>
+                <div className="text-3xl font-black text-[#C4B5FD]">{paidCoachingCount} Institutes</div>
+                <p className="text-xs text-[#94A3B8]">Active Director & Coaching Passes</p>
+              </div>
+
+              <div className="p-6 rounded-2xl bg-[#080D24] border border-white/10 space-y-2">
+                <span className="text-xs text-[#94A3B8] uppercase font-bold tracking-wider">Paid Board Students</span>
+                <div className="text-3xl font-black text-[#67E8F9]">{paidStudentCount} Active Passes</div>
+                <p className="text-xs text-[#94A3B8]">Class 10 & 12 Board Passes</p>
+              </div>
+
+              <div className="p-6 rounded-2xl bg-[#080D24] border border-white/10 space-y-2">
+                <span className="text-xs text-[#94A3B8] uppercase font-bold tracking-wider">Total Quota Allocated</span>
+                <div className="text-3xl font-black text-[#5EE7FF]">{totalQuotasIssued} Papers</div>
+                <p className="text-xs text-emerald-400 font-semibold">Live capacity across all tiers</p>
+              </div>
             </div>
 
-            <div className="p-6 rounded-2xl bg-[#080D24] border border-white/10 space-y-2">
-              <span className="text-xs text-[#94A3B8] uppercase font-bold tracking-wider">Paid Coaching Centers</span>
-              <div className="text-3xl font-black text-[#C4B5FD]">2 Institutes</div>
-              <p className="text-xs text-[#94A3B8]">1 Director Pro • 1 Tuition Master</p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-[#080D24] border border-white/10 space-y-2">
-              <span className="text-xs text-[#94A3B8] uppercase font-bold tracking-wider">Paid Board Students</span>
-              <div className="text-3xl font-black text-[#67E8F9]">2 Active Passes</div>
-              <p className="text-xs text-[#94A3B8]">Class 10 & Class 12 passes</p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-[#080D24] border border-white/10 space-y-2">
-              <span className="text-xs text-[#94A3B8] uppercase font-bold tracking-wider">Total AI Checks Run</span>
-              <div className="text-3xl font-black text-[#5EE7FF]">348 Evaluations</div>
-              <p className="text-xs text-emerald-400 font-semibold">Gemini 3.5-Flash 99.8% Success</p>
+            <div className="p-5 rounded-2xl bg-[#0C1330] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h4 className="text-sm font-bold text-white">Live Payment Verification Queue</h4>
+                <p className="text-xs text-[#94A3B8]">{pendingPaymentsCount} pending manual UTR approvals waiting in queue.</p>
+              </div>
+              <button
+                onClick={() => setActiveTab('payments')}
+                className="btn-gradient px-4 py-2 rounded-xl text-xs font-bold text-white shadow"
+              >
+                Go to Approvals ({pendingPaymentsCount})
+              </button>
             </div>
           </div>
         )}
