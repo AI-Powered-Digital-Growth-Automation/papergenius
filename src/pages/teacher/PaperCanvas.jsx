@@ -150,7 +150,7 @@ export default function PaperCanvas({
             </div>
             <img
               src={`https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent(
-                `https://papergenius.in/verify-paper/${(displaySubject || 'cbse-paper').toLowerCase().replace(/\s+/g, '-')}-${(formData.grade || '12').replace(/\s+/g, '')}?set=${encodeURIComponent(activeSet || 'Set A')}`
+                `https://papergenius.in/verify-paper/${(displaySubject || "science").toLowerCase().replace(/\s+/g, "-")}-${(formData.grade || "10").replace(/\s+/g, "")}?set=${encodeURIComponent(activeSet || "Set A")}&qCount=${sections.reduce((acc, s) => acc + (s?.questions?.length || 0), 0)}&marks=${displayMaxMarks}`
               )}`}
               alt="Scan for Answer Key QR Code"
               className="w-14 h-14 object-contain print:w-14 print:h-14"

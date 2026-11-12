@@ -67,7 +67,8 @@ export default function TeacherDashboardPage() {
   const directorEmail = user?.email || 'digitalgulzarservices@gmail.com';
 
   const quotaTotal = coachingSubscription?.papersQuota ?? 2;
-  const quotaUsed = coachingSubscription?.papersGeneratedThisMonth ?? 0;
+  const localDeduction = typeof window !== 'undefined' ? parseInt(localStorage.getItem('pg_demo_quota_used') || '0', 10) : 0;
+  const quotaUsed = (coachingSubscription?.papersGeneratedThisMonth ?? 0) + localDeduction;
   const quotaRemaining = Math.max(0, quotaTotal - quotaUsed);
   const progressPercent = Math.min(100, Math.round((quotaUsed / (quotaTotal || 1)) * 100));
 

@@ -241,6 +241,14 @@ export default function CreatePaperPage() {
 
       // 1. SAVE TO COACHING PRIVATE VAULT (localStorage + Supabase)
       const storageKey = `pg_papers_${user?.id || user?.email || 'guest'}`;
+      
+      // Update local quota tracking immediately
+      try {
+        const currentQuota = parseInt(localStorage.getItem('pg_demo_quota') || '2', 10);
+        const used = parseInt(localStorage.getItem('pg_demo_quota_used') || '0', 10);
+        localStorage.setItem('pg_demo_quota_used', (used + 1).toString());
+      } catch (e) {}
+
       const paperRecord = {
         id: 'pg_' + Date.now(),
         title: `${formData.grade} ${formData.subject} - ${formData.chapter || 'Assessment'}`,

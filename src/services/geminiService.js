@@ -64,7 +64,7 @@ Generate a strictly curriculum-compliant question paper adhering to the latest C
 SPECIFICATIONS:
 - Class/Grade: ${grade}
 - Subject: ${subject}
-- Chapter/Topic: ${chapter}
+- Chapter/Topic: ${chapter || 'Full Syllabus'}\n- Topic Scope: Focus questions specifically around '${chapter || 'Core Syllabus'}' while adhering strictly to CBSE standard.
 - Total Marks: ${marks} Marks
 - Difficulty Mix: ${difficulty}
 - Target Standard: Exactly mirror official CBSE Board examination structure
