@@ -1,14 +1,22 @@
-﻿import React from 'react';
+import React from 'react';
 import { Copy, Printer, CheckCircle2 } from 'lucide-react';
 
-export default function PaperCanvas({ 
-  paperData, 
-  formData, 
-  activeSet, 
-  copied, 
-  onCopyText, 
-  onPrint 
+export default function PaperCanvas({
+  paperData,
+  formData = {},
+  activeSet = 'Set A',
+  copied = false,
+  onCopyText,
+  onPrint
 }) {
+  const details = paperData?.examDetails || {};
+  const displaySubject = details.subject || formData.subject || 'Subject Assessment';
+  const displayMaxMarks = details.maxMarks ?? formData.maxMarks ?? 40;
+  const displayDuration = details.duration || formData.duration || '90 Minutes';
+  const displayTitle = details.title || `${formData.grade || 'Class 12'} ${displaySubject} Assessment`;
+  const instructions = details.generalInstructions || [];
+  const sections = paperData?.sections || [];
+
   return (
     <div className="space-y-4">
       {/* Top Action Toolbar (Hidden on Print) */}
@@ -20,7 +28,7 @@ export default function PaperCanvas({
           </span>
           <span className="text-slate-500">|</span>
           <span className="text-sm text-slate-300 font-semibold">
-            {paperData.examDetails.subject} ({paperData.examDetails.maxMarks} Marks)
+            {displaySubject} ({displayMaxMarks} Marks)
           </span>
         </div>
 
@@ -45,7 +53,7 @@ export default function PaperCanvas({
 
       {/* White A4 Print-ready Canvas */}
       <div className="relative bg-white text-black p-8 sm:p-14 rounded-2xl shadow-2xl border border-slate-200 overflow-hidden print:shadow-none print:border-none print:p-0">
-        
+
         {/* Background Watermark */}
         {formData.watermarkText && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.04] select-none rotate-[-30deg]">
@@ -57,7 +65,7 @@ export default function PaperCanvas({
 
         {/* Coaching Header */}
         <div className="border-b-2 border-black pb-4 text-center relative z-10">
-          <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-wider">{formData.coachingName}</h2>
+          <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-wider">{formData.coachingName || 'Coaching Academy'}</h2>
           {formData.subHeader && (
             <p className="text-sm font-semibold text-slate-700 mt-1">{formData.subHeader}</p>
           )}
@@ -66,23 +74,23 @@ export default function PaperCanvas({
           )}
 
           <div className="mt-4 pt-2 border-t border-slate-400 flex flex-wrap justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
-            <span>{paperData.examDetails.title}</span>
+            <span>{displayTitle}</span>
             <span className="px-2.5 py-0.5 bg-black text-white rounded text-xs uppercase font-mono">{activeSet}</span>
           </div>
 
           <div className="flex justify-between items-center text-xs sm:text-sm font-bold mt-2 pt-1 border-t border-dashed border-slate-300">
-            <span>Subject: {paperData.examDetails.subject}</span>
-            <span>Max Marks: {paperData.examDetails.maxMarks}</span>
-            <span>Time: {paperData.examDetails.duration}</span>
+            <span>Subject: {displaySubject}</span>
+            <span>Max Marks: {displayMaxMarks}</span>
+            <span>Time: {displayDuration}</span>
           </div>
         </div>
 
         {/* General Instructions */}
-        {paperData.examDetails.generalInstructions?.length > 0 && (
+        {instructions.length > 0 && (
           <div className="my-4 p-3 bg-slate-50 border border-slate-200 rounded text-xs relative z-10">
             <p className="font-bold underline mb-1">General Instructions:</p>
             <ol className="list-decimal pl-5 space-y-0.5 text-slate-700">
-              {paperData.examDetails.generalInstructions.map((ins, i) => (
+              {instructions.map((ins, i) => (
                 <li key={i}>{ins}</li>
               ))}
             </ol>
@@ -91,21 +99,21 @@ export default function PaperCanvas({
 
         {/* Questions Sections */}
         <div className="space-y-6 mt-5 relative z-10">
-          {paperData.sections?.map((sec, secIdx) => (
+          {sections.map((sec, secIdx) => (
             <div key={secIdx} className="section-break">
               <div className="text-center font-bold text-sm tracking-wider uppercase border-b border-black pb-1 mb-3">
-                {sec.sectionName}
+                {sec?.sectionName || `Section ${String.fromCharCode(65 + secIdx)}`}
               </div>
 
               <div className="space-y-4">
-                {sec.questions?.map((q, qIdx) => (
+                {sec?.questions?.map((q, qIdx) => (
                   <div key={qIdx} className="question-item text-sm leading-relaxed">
                     <div className="flex justify-between items-start gap-4">
                       <div className="flex-1">
-                        <span className="font-bold mr-2">Q{q.qNumber}.</span>
+                        <span className="font-bold mr-2">Q{q.qNumber || (qIdx + 1)}.</span>
                         <span>{q.questionText}</span>
                       </div>
-                      <span className="font-bold text-xs shrink-0">[{q.marks}]</span>
+                      <span className="font-bold text-xs shrink-0">[{q.marks || 1}]</span>
                     </div>
 
                     {q.options && q.options.length > 0 && (
@@ -122,19 +130,19 @@ export default function PaperCanvas({
           ))}
         </div>
 
-                {/* Verification Footer with Dynamic QR Code */}
+        {/* Verification Footer with Dynamic QR Code */}
         <div className="mt-8 pt-4 border-t-2 border-slate-400 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono relative z-10 print:mt-6 print:pt-3">
           <div className="space-y-1 text-slate-700 text-left">
             <div className="font-bold text-black uppercase tracking-wider flex items-center gap-2">
               <span>Set: {activeSet}</span>
-              <span>•</span>
+              <span>�</span>
               <span className="text-emerald-700">CBSE Blueprint Aligned</span>
             </div>
             <p className="text-[11px] text-slate-600">Scan QR code using any smartphone camera for step-wise marking key & model solutions.</p>
-            <p className="text-[10px] text-slate-400">Powered by PaperGenius CBSE Exam OS • {formData.coachingName || 'Coaching Institute'}</p>
+            <p className="text-[10px] text-slate-400">Powered by PaperGenius CBSE Exam OS � {formData.coachingName || 'Coaching Institute'}</p>
           </div>
 
-                           {/* Real Dynamic QR Verification Code */}
+          {/* Real Dynamic QR Verification Code */}
           <div className="flex items-center gap-2.5 shrink-0 border border-slate-300 p-2 rounded-xl bg-slate-50 print:bg-white print:border-slate-400">
             <div className="text-right">
               <span className="block text-[10px] font-bold text-black uppercase leading-tight">Scan for</span>
@@ -142,7 +150,7 @@ export default function PaperCanvas({
             </div>
             <img
               src={`https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent(
-                `https://papergenius.in/verify-paper/${(formData.subject || 'cbse-paper').toLowerCase().replace(/\s+/g, '-')}-${(formData.classLevel || '10').replace(/\s+/g, '')}?set=${encodeURIComponent(activeSet || 'Set A')}`
+                `https://papergenius.in/verify-paper/${(displaySubject || 'cbse-paper').toLowerCase().replace(/\s+/g, '-')}-${(formData.grade || '12').replace(/\s+/g, '')}?set=${encodeURIComponent(activeSet || 'Set A')}`
               )}`}
               alt="Scan for Answer Key QR Code"
               className="w-14 h-14 object-contain print:w-14 print:h-14"

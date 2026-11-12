@@ -1,10 +1,29 @@
-﻿/**
- * Calls the Netlify serverless backend.
- * The Gemini API key remains server-side only.
- */
+import { GoogleGenAI } from '@google/genai';
+
+// Safe JSON parser for AI responses
+function parseSafeAIJson(rawText) {
+  if (!rawText) throw new Error('AI returned an empty response.');
+
+  let cleaned = rawText
+    .replace(/^[^{[]*/, '')
+    .replace(/[^}]]*$/, '')
+    .trim();
+
+  try {
+    return JSON.parse(cleaned);
+  } catch (e1) {
+    try {
+      let fixed = cleaned.replace(/\\([a-zA-Z])/g, '$1');
+      return JSON.parse(fixed);
+    } catch (e2) {
+      console.error('JSON parse failed. Raw text:', rawText);
+      throw new Error('AI returned an unexpected format. Please retry paper generation.');
+    }
+  }
+}
+
 async function callGeminiSecure(params, maxRetries = 2) {
   let attempt = 0;
-
   while (attempt <= maxRetries) {
     try {
       const res = await fetch('/api/gemini', {
@@ -13,31 +32,23 @@ async function callGeminiSecure(params, maxRetries = 2) {
         body: JSON.stringify({ action: 'generateContent', params })
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.text) {
-          return data.text;
-        }
-      } else {
+      if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        console.warn('API Endpoint returned error:', errData);
+        throw new Error(errData.error || ('HTTP ' + res.status));
       }
-    } catch (netErr) {
-      console.warn('Fetch attempt error:', netErr);
-    }
 
-    attempt++;
-    if (attempt <= maxRetries) {
-      await new Promise(r => setTimeout(r, 1000 * attempt));
+      const data = await res.json();
+      if (!data.text) throw new Error('Empty AI response');
+      return data.text;
+    } catch (err) {
+      attempt++;
+      if (attempt > maxRetries) throw err;
+      await new Promise(r => setTimeout(r, 1500 * attempt));
     }
   }
-
-  throw new Error('AI Engine is currently busy or experiencing high demand. Please retry in a few seconds.');
+  throw new Error('AI Engine is currently busy. Please retry.');
 }
 
-/**
- * 1. Generate Question Paper (Text Mode)
- */
 export async function generateQuestionPaper({
   grade = 'Class 10',
   subject = 'Science',
@@ -57,7 +68,7 @@ SPECIFICATIONS:
 - Total Marks: ${marks} Marks
 - Difficulty Mix: ${difficulty}
 - Target Standard: Exactly mirror official CBSE Board examination structure
-- Special Instructions: ${specialInstructions || 'Strict adherence to NEP 50% competency guidelines'}
+- Special Instructions: ${specialInstructions || 'Strict adherence to NEP 50% competency guidelines. Do not use raw LaTeX backslashes; write chemical formulas in plain text like H2SO4, CO2, etc.'}
 
 FORMAT REQUIREMENT:
 Respond ONLY with a valid, clean JSON object matching this exact structure:
@@ -82,7 +93,9 @@ Respond ONLY with a valid, clean JSON object matching this exact structure:
           "marks": 1,
           "questionText": "Question text...",
           "options": ["A) option 1", "B) option 2", "C) option 3", "D) option 4"],
-          "answerKey": "A) option 1"
+          "answerKey": "A) option 1",
+          "correctAnswer": "A) option 1",
+          "markingScheme": "1 Mark for correct identification"
         }
       ]
     }
@@ -98,18 +111,9 @@ Return raw JSON only without markdown code blocks.`;
     }
   });
 
-  try {
-    const cleaned = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-    return JSON.parse(cleaned);
-  } catch (parseErr) {
-    console.error('Failed to parse question paper JSON:', rawText);
-    throw new Error('AI returned an unexpected format. Please retry paper generation.');
-  }
+  return parseSafeAIJson(rawText);
 }
 
-/**
- * 2. Evaluate Answer Sheet (Multimodal Vision Mode)
- */
 export async function evaluateAnswerSheet({
   imageBase64,
   mimeType = 'image/jpeg',
@@ -120,69 +124,23 @@ export async function evaluateAnswerSheet({
 }) {
   const prompt = `You are an official CBSE Head Examiner evaluating a student's handwritten answer sheet.
 Evaluate the handwriting against official CBSE step-marking rubrics.
-
-CRITERIA:
-1. Transcribe the student's handwritten answer accurately.
-2. Break down the marks step-by-step:
-   - Stating governing formula/principle (0.5 to 1M)
-   - Intermediate algebraic substitution (1 to 2M)
-   - Final magnitude with proper SI unit (0.5 to 1M)
-3. Check 100/100 Topper Presentation Benchmarks:
-   - Is the final formula/answer enclosed in a box?
-   - Is there a right-side rough work margin?
-   - Are SI units correctly stated and underlined?
-4. Pinpoint exact deductions and provide the official model topper answer.
-
-Respond ONLY with a valid JSON object matching this structure:
-{
-  "transcribedText": "Student text read from image",
-  "marksAwarded": 4.5,
-  "maxMarks": ${maxMarks},
-  "percentage": 90,
-  "presentationRating": "Excellent / Needs Improvement",
-  "stepBreakdown": [
-    { "step": "Formula declaration", "marks": "1/1", "status": "Awarded" }
-  ],
-  "deductions": [
-    "Exact reason if any mark was deducted"
-  ],
-  "topperSecretsCheck": {
-    "formulaBoxed": true,
-    "roughMarginPresent": false,
-    "siUnitUnderlined": true
-  },
-  "modelAnswer": "Official CBSE topper solution",
-  "feedback": "Actionable encouragement for the student"
-}
-Return raw JSON only without code blocks.`;
-
-  const parts = [
-    { text: prompt },
-    {
-      inlineData: {
-        data: imageBase64,
-        mimeType: mimeType
-      }
-    }
-  ];
-
-  if (questionContext) {
-    parts.unshift({ text: `Question Reference Context: ${questionContext}` });
-  }
+Return raw JSON with scorecard, step breakdown, and deductions.`;
 
   const rawText = await callGeminiSecure({
-    contents: [{ role: 'user', parts: parts }],
+    contents: [
+      {
+        role: 'user',
+        parts: [
+          { text: prompt },
+          { inlineData: { mimeType, data: imageBase64 } }
+        ]
+      }
+    ],
     generationConfig: {
       temperature: 0.2,
       responseMimeType: 'application/json'
     }
   });
 
-  try {
-    const cleaned = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-    return JSON.parse(cleaned);
-  } catch (parseErr) {
-    console.error('Failed to parse evaluation JSON:', rawText);
-    throw new Error('AI evaluation response parsing failed. Please retry.');
-  }
+  return parseSafeAIJson(rawText);
 }

@@ -1,3 +1,4 @@
+import { supabase } from '../../services/supabaseClient';
 ﻿import React, { useState, useMemo } from 'react';
 import { 
   Sparkles, Printer, RefreshCw, AlertCircle, FileText, ShieldAlert, Award, 
@@ -173,7 +174,8 @@ function getShuffledPaper(basePaper, setCode) {
 }
 
 export default function CreatePaperPage() {
-  const { user } = useAuth();
+  const { user, coachingSubscription } = useAuth();
+  
 
   const instituteTitle = user?.user_metadata?.full_name 
     ? `${user.user_metadata.full_name}'s Academy` 
@@ -224,7 +226,7 @@ export default function CreatePaperPage() {
     setFormData(prev => ({
       ...prev,
       [name]: name === 'maxMarks' ? Number(value) : value,
-      ...(name === 'grade' ? { subject: subjectsByGrade[value][0] } : {})
+      ...(name === 'grade' ? { subject: (subjectsByGrade[value] || subjectsByGrade['Class 10'] || [])[0] || 'Science' } : {})
     }));
   };
 
@@ -236,6 +238,70 @@ export default function CreatePaperPage() {
     try {
       const generated = await generateQuestionPaper(formData);
       setPaperData(generated);
+
+      // 1. SAVE TO COACHING PRIVATE VAULT (localStorage + Supabase)
+      const storageKey = `pg_papers_${user?.id || user?.email || 'guest'}`;
+      const paperRecord = {
+        id: 'pg_' + Date.now(),
+        title: `${formData.grade} ${formData.subject} - ${formData.chapter || 'Assessment'}`,
+        grade: formData.grade,
+        subject: formData.subject,
+        chapter: formData.chapter,
+        maxMarks: formData.maxMarks,
+        createdAt: new Date().toISOString(),
+        date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        paperData: generated,
+        formData: formData
+      };
+
+      try {
+        const existing = JSON.parse(localStorage.getItem(storageKey) || '[]');
+        localStorage.setItem(storageKey, JSON.stringify([paperRecord, ...existing]));
+      } catch (saveErr) {
+        console.warn('LocalStorage save warning:', saveErr);
+      }
+
+      // 2. STORE ANSWER KEY FOR INSTANT SMARTPHONE QR CODE VERIFICATION
+      const paperSlug = `${(formData.subject || 'cbse-paper').toLowerCase().replace(/\s+/g, '-')}-${(formData.grade || '10').replace(/\s+/g, '')}`;
+      try {
+        localStorage.setItem('pg_verify_' + paperSlug, JSON.stringify({
+          title: paperRecord.title,
+          grade: formData.grade,
+          subject: formData.subject,
+          activeSet: activeSet || 'Set A',
+          sections: generated.sections || [],
+          examDetails: generated.examDetails || {}
+        }));
+      } catch (qrErr) {}
+
+      // 3. DEDUCT QUOTA (Atomic Supabase RPC or User Quotas Table)
+      if (user?.email) {
+        try {
+          await supabase.rpc('consume_user_quota', { p_user_id: user.id });
+        } catch (rpcErr) {
+          try {
+            const { data: qData } = await supabase
+              .from('user_quotas')
+              .select('quota_remaining, papers_generated_this_month')
+              .eq('email', user.email.toLowerCase())
+              .maybeSingle();
+
+            if (qData) {
+              await supabase
+                .from('user_quotas')
+                .update({
+                  quota_remaining: Math.max(0, (qData.quota_remaining ?? 2) - 1),
+                  papers_generated_this_month: (qData.papers_generated_this_month ?? 0) + 1,
+                  updated_at: new Date().toISOString()
+                })
+                .eq('email', user.email.toLowerCase());
+            }
+          } catch (qErr) {
+            console.warn('Quota update sync warning:', qErr);
+          }
+        }
+      }
+
     } catch (err) {
       setError(err.message || 'Generation failed. Please try again.');
     } finally {
@@ -507,7 +573,7 @@ export default function CreatePaperPage() {
                     onChange={handleInputChange}
                     className="w-full bg-[#050814] border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:border-[#7C3CFF] outline-none"
                   >
-                    {subjectsByGrade[formData.grade].map(s => (
+                    {(subjectsByGrade[formData.grade] || subjectsByGrade['Class 10'] || []).map(s => (
                       <option key={s} value={s}>{s}</option>
                     ))}
                   </select>
@@ -678,9 +744,9 @@ export default function CreatePaperPage() {
                         {sec.questions?.map((q, qIdx) => (
                           <div key={qIdx} className="border-t border-white/5 pt-2 text-xs">
                             <p className="font-semibold text-white">
-                              Q{q.qNumber}. Ans: <span className="text-emerald-400">{q.correctAnswer}</span>
+                              Q{q.qNumber}. Ans: <span className="text-emerald-400">{q.correctAnswer || q.answerKey || q.answer || 'Refer to model solution'}</span>
                             </p>
-                            <p className="text-[#94A3B8] mt-0.5">Scheme: {q.markingScheme}</p>
+                            <p className="text-[#94A3B8] mt-0.5">Scheme: {q.markingScheme || q.stepMarking || (`Full ${q.marks || 1} mark(s) awarded for accurate step derivation/option.`)}</p>
                           </div>
                         ))}
                       </div>
